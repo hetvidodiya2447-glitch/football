@@ -211,11 +211,10 @@ const CompanionHome = () => {
               <div ref={chatRef} className="flex-grow overflow-y-auto mb-3 space-y-3 max-h-40 pr-1">
                 {chatHistory.map((msg, i) => (
                   <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] px-3 py-2 text-sm rounded-lg animate-in fade-in slide-in-from-bottom-1 ${
-                      msg.role === 'user'
+                    <div className={`max-w-[85%] px-3 py-2 text-sm rounded-lg animate-in fade-in slide-in-from-bottom-1 ${msg.role === 'user'
                         ? 'bg-cyber-volt/20 border border-cyber-volt/30 text-primary'
                         : 'bg-white/5 border border-white/10 text-on-surface-variant'
-                    }`}>
+                      }`}>
                       {msg.role === 'ai' && (
                         <div className="flex items-center gap-1 mb-1">
                           <span className="material-symbols-outlined text-cyber-volt text-[10px]">neurology</span>
