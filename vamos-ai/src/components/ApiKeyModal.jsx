@@ -9,8 +9,8 @@ const ApiKeyModal = ({ onClose }) => {
   const handleSave = (e) => {
     e.preventDefault();
     const trimmed = input.trim();
-    if (!trimmed.startsWith('AI')) {
-      setError('Invalid key format — Gemini API keys start with "AI"');
+    if (!trimmed) {
+      setError('API key cannot be empty');
       return;
     }
     saveKey(trimmed);
