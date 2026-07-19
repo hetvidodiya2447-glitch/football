@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import ApiKeyModal from '../components/ApiKeyModal';
-import { useGeminiKey } from '../context/GeminiKeyContext';
-import { createCopilotChat, sendMessageStream } from '../services/gemini';
+import { createCopilotChat, sendMessageStream, getErrorMessage } from '../services/gemini';
 
 // ─── Role → allowed tabs ────────────────────────────────────────────────────
 const ROLE_ACCESS = {
@@ -175,7 +173,7 @@ const ReportingModule = () => (
   </div>
 );
 
-const LiveOpsModule = ({ messages, input, setInput, handleCommand, handleRecommendationAction, isAiTyping, aiError, showKeyModal, setShowKeyModal, apiKey }) => (
+const LiveOpsModule = ({ messages, input, setInput, handleCommand, handleRecommendationAction, isAiTyping, aiError }) => (
   <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
     {/* Live Ops Header */}
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -291,15 +289,11 @@ const LiveOpsModule = ({ messages, input, setInput, handleCommand, handleRecomme
         </div>
         <div className="flex items-center gap-3">
           {isAiTyping && <span className="text-[9px] font-label-caps animate-pulse">GENERATING_RESPONSE...</span>}
-          {!isAiTyping && <span className="text-[9px] font-label-caps opacity-60">GEMINI_2.0_FLASH</span>}
-          <button
-            onClick={() => setShowKeyModal(true)}
-            title={apiKey ? 'API key active' : 'Set Gemini API key'}
-            className={`flex items-center gap-1 text-[8px] font-label-caps px-2 py-0.5 border rounded transition-colors ${apiKey ? 'border-black/40 text-black/60 hover:border-black' : 'border-[#ff4444] text-[#ff4444] animate-pulse'}`}
-          >
-            <span className="material-symbols-outlined text-[10px]">{apiKey ? 'check_circle' : 'key'}</span>
-            {apiKey ? 'AI LIVE' : 'SET KEY'}
-          </button>
+          {!isAiTyping && <span className="text-[9px] font-label-caps opacity-60">LOCAL RAG SYSTEM</span>}
+          <div className="flex items-center gap-1 text-[8px] font-label-caps px-2 py-0.5 border border-black/40 text-black/60">
+            <span className="material-symbols-outlined text-[10px]">check_circle</span>
+            OFFLINE
+          </div>
         </div>
       </div>
       <div className="p-6 h-80 flex flex-col font-mono text-sm overflow-hidden bg-black/40">
@@ -352,7 +346,7 @@ const LiveOpsModule = ({ messages, input, setInput, handleCommand, handleRecomme
             onChange={(e) => setInput(e.target.value)}
             disabled={isAiTyping}
             className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-32 py-3 text-sm focus:border-cyber-volt focus:outline-none text-cyber-volt font-mono placeholder:text-white/20 transition-all disabled:opacity-50"
-            placeholder={apiKey ? 'Ask CopilotIQ anything...' : 'Set API key to activate AI...'}
+            placeholder="Ask CopilotIQ anything..."
             type="text"
           />
           <button type="submit" disabled={isAiTyping || !input.trim()} className="absolute right-2 top-2 bottom-2 bg-cyber-volt text-black px-6 font-label-caps text-[10px] hover:brightness-110 transition-all disabled:opacity-40">EXEC_CMD</button>
@@ -385,22 +379,17 @@ const CommandDashboard = ({ staff, onLogout }) => {
   const [input, setInput] = useState('');
   const [isAiTyping, setIsAiTyping] = useState(false);
   const [aiError, setAiError] = useState('');
-  const [showKeyModal, setShowKeyModal] = useState(false);
   const terminalRef = useRef(null);
   const chatSessionRef = useRef(null);
-  const { apiKey } = useGeminiKey();
 
   // Determine allowed tabs for logged-in role
   const tierKey = getTierKey(staff?.tier);
   const allowedTabs = ROLE_ACCESS[tierKey] || ['LIVE_OPS'];
 
-  // Init/re-init Gemini chat session
+  // Initialize RAG chat session
   useEffect(() => {
-    if (apiKey) {
-      chatSessionRef.current = createCopilotChat(apiKey);
-      setAiError('');
-    }
-  }, [apiKey]);
+    chatSessionRef.current = createCopilotChat();
+  }, []);
 
   // Auto-scroll terminal
   useEffect(() => {
@@ -410,11 +399,6 @@ const CommandDashboard = ({ staff, onLogout }) => {
   const handleCommand = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
-
-    if (!apiKey) {
-      setShowKeyModal(true);
-      return;
-    }
 
     const userText = input.trim();
     const senderLabel = staff?.name || 'OPERATOR';
@@ -427,14 +411,14 @@ const CommandDashboard = ({ staff, onLogout }) => {
     setMessages(prev => [...prev, { id: aiId, sender: 'AI', text: '', streaming: true }]);
 
     try {
-      if (!chatSessionRef.current) chatSessionRef.current = createCopilotChat(apiKey);
+      if (!chatSessionRef.current) chatSessionRef.current = createCopilotChat();
       await sendMessageStream(chatSessionRef.current, userText, (partial) => {
         setMessages(prev => prev.map(m => m.id === aiId ? { ...m, text: partial } : m));
       });
       setMessages(prev => prev.map(m => m.id === aiId ? { ...m, streaming: false } : m));
     } catch (err) {
-      console.error(err);
-      setAiError('AI error — check your API key.');
+      console.error('RAG Copilot error:', err);
+      setAiError(getErrorMessage(err));
       setMessages(prev => prev.filter(m => m.id !== aiId));
     } finally {
       setIsAiTyping(false);
@@ -454,7 +438,7 @@ const CommandDashboard = ({ staff, onLogout }) => {
 
     switch (activeTab) {
       case 'LIVE_OPS':
-        return <LiveOpsModule messages={messages} input={input} setInput={setInput} handleCommand={handleCommand} handleRecommendationAction={handleRecommendationAction} isAiTyping={isAiTyping} aiError={aiError} showKeyModal={showKeyModal} setShowKeyModal={setShowKeyModal} apiKey={apiKey} />;
+        return <LiveOpsModule messages={messages} input={input} setInput={setInput} handleCommand={handleCommand} handleRecommendationAction={handleRecommendationAction} isAiTyping={isAiTyping} aiError={aiError} />;
       case 'INCIDENTS':
         return <IncidentsModule />;
       case 'DISPATCH':
@@ -468,7 +452,6 @@ const CommandDashboard = ({ staff, onLogout }) => {
 
   return (
     <div className="bg-black text-[#e5e2e1] min-h-[100dvh] font-body-md selection:bg-cyber-volt selection:text-black">
-      {showKeyModal && <ApiKeyModal onClose={() => setShowKeyModal(false)} />}
       {/* CRT scanline */}
       <div className="fixed inset-0 pointer-events-none opacity-5 z-[100]" style={{
         background: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06))',

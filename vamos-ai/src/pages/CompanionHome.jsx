@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import StadiumMap from '../components/StadiumMap';
-import ApiKeyModal from '../components/ApiKeyModal';
-import { useGeminiKey } from '../context/GeminiKeyContext';
-import { createCompanionChat, sendMessageStream } from '../services/gemini';
+import { createCompanionChat, sendMessageStream, getErrorMessage } from '../services/gemini';
 
 const CompanionHome = () => {
   const [matchTime, setMatchTime] = useState(74 * 60 + 17);
@@ -11,11 +9,9 @@ const CompanionHome = () => {
   const [iqInput, setIqInput] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [showKeyModal, setShowKeyModal] = useState(false);
   const [aiError, setAiError] = useState('');
   const chatRef = useRef(null);
   const chatSessionRef = useRef(null);
-  const { apiKey } = useGeminiKey();
 
   // Tick match time
   useEffect(() => {
@@ -23,13 +19,10 @@ const CompanionHome = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Create/recreate chat session when apiKey changes
+  // Initialize RAG chat session
   useEffect(() => {
-    if (apiKey) {
-      chatSessionRef.current = createCompanionChat(apiKey);
-      setAiError('');
-    }
-  }, [apiKey]);
+    chatSessionRef.current = createCompanionChat();
+  }, []);
 
   // Auto-scroll chat panel
   useEffect(() => {
@@ -39,11 +32,6 @@ const CompanionHome = () => {
   const handleAskIQ = async (e) => {
     e.preventDefault();
     if (!iqInput.trim()) return;
-
-    if (!apiKey) {
-      setShowKeyModal(true);
-      return;
-    }
 
     const userMsg = iqInput.trim();
     setIqInput('');
@@ -59,7 +47,7 @@ const CompanionHome = () => {
 
     try {
       if (!chatSessionRef.current) {
-        chatSessionRef.current = createCompanionChat(apiKey);
+        chatSessionRef.current = createCompanionChat();
       }
 
       await sendMessageStream(chatSessionRef.current, userMsg, (partial) => {
@@ -73,8 +61,8 @@ const CompanionHome = () => {
         prev.map(m => m.id === aiId ? { ...m, streaming: false } : m)
       );
     } catch (err) {
-      console.error(err);
-      setAiError('AI unavailable. Check your API key or try again.');
+      console.error('RAG Chatbot error:', err);
+      setAiError(getErrorMessage(err));
       setChatHistory(prev => prev.filter(m => m.id !== aiId));
     } finally {
       setIsTyping(false);
@@ -208,17 +196,13 @@ const CompanionHome = () => {
                 <div className="tech-id">IQ_COGNITIVE_ASSISTANT</div>
                 <div className="bg-cyber-volt text-black text-[9px] px-2 py-0.5 font-bold uppercase rounded flex items-center gap-1">
                   <span className="material-symbols-outlined text-[10px]">neurology</span>
-                  Gemini AI
+                  LOCAL RAG
                 </div>
               </div>
-              <button
-                onClick={() => setShowKeyModal(true)}
-                title={apiKey ? 'API key active — click to change' : 'Set API key'}
-                className={`flex items-center gap-1 text-[9px] font-label-caps px-2 py-1 rounded border transition-colors ${apiKey ? 'border-cyber-volt/40 text-cyber-volt/70 hover:border-cyber-volt' : 'border-[#ffb4ab]/40 text-[#ffb4ab] hover:border-[#ffb4ab] animate-pulse'}`}
-              >
-                <span className="material-symbols-outlined text-[12px]">{apiKey ? 'check_circle' : 'key'}</span>
-                {apiKey ? 'AI ACTIVE' : 'SET KEY'}
-              </button>
+              <div className="flex items-center gap-1 text-[9px] font-label-caps px-2 py-1 rounded border border-cyber-volt/40 text-cyber-volt/70">
+                <span className="material-symbols-outlined text-[12px]">check_circle</span>
+                OFFLINE ACTIVE
+              </div>
             </div>
             <h3 className="text-headline-sm font-bold text-primary mb-3">ASK IQ</h3>
 
@@ -293,8 +277,6 @@ const CompanionHome = () => {
 
   return (
     <>
-      {showKeyModal && <ApiKeyModal onClose={() => setShowKeyModal(false)} />}
-
       <header className="bg-black/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center w-full px-4 md:px-8 py-4 sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <button className="material-symbols-outlined text-cyber-volt p-2 hover:bg-white/5 rounded transition-colors">menu</button>
