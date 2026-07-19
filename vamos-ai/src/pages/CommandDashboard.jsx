@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ApiKeyModal from '../components/ApiKeyModal';
+import { useGeminiKey } from '../context/GeminiKeyContext';
+import { createCopilotChat, sendMessageStream } from '../services/gemini';
 
 // ─── Role → allowed tabs ────────────────────────────────────────────────────
 const ROLE_ACCESS = {
@@ -172,7 +175,7 @@ const ReportingModule = () => (
   </div>
 );
 
-const LiveOpsModule = ({ messages, input, setInput, handleCommand, handleRecommendationAction }) => (
+const LiveOpsModule = ({ messages, input, setInput, handleCommand, handleRecommendationAction, isAiTyping, aiError, showKeyModal, setShowKeyModal, apiKey }) => (
   <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
     {/* Live Ops Header */}
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -286,18 +289,37 @@ const LiveOpsModule = ({ messages, input, setInput, handleCommand, handleRecomme
           <span className="material-symbols-outlined text-sm">neurology</span>
           <h3 className="font-label-caps text-[11px] font-bold tracking-widest italic">COPILOT_IQ_v4.2 // TERMINAL</h3>
         </div>
-        <span className="text-[9px] font-label-caps animate-pulse">ANALYZING_REALTIME_STREAMS...</span>
+        <div className="flex items-center gap-3">
+          {isAiTyping && <span className="text-[9px] font-label-caps animate-pulse">GENERATING_RESPONSE...</span>}
+          {!isAiTyping && <span className="text-[9px] font-label-caps opacity-60">GEMINI_2.0_FLASH</span>}
+          <button
+            onClick={() => setShowKeyModal(true)}
+            title={apiKey ? 'API key active' : 'Set Gemini API key'}
+            className={`flex items-center gap-1 text-[8px] font-label-caps px-2 py-0.5 border rounded transition-colors ${apiKey ? 'border-black/40 text-black/60 hover:border-black' : 'border-[#ff4444] text-[#ff4444] animate-pulse'}`}
+          >
+            <span className="material-symbols-outlined text-[10px]">{apiKey ? 'check_circle' : 'key'}</span>
+            {apiKey ? 'AI LIVE' : 'SET KEY'}
+          </button>
+        </div>
       </div>
-      <div className="p-6 h-64 flex flex-col font-mono text-sm overflow-hidden bg-black/40">
+      <div className="p-6 h-80 flex flex-col font-mono text-sm overflow-hidden bg-black/40">
         <div className="flex-grow space-y-4 overflow-y-auto mb-4 pr-2">
           {messages.map((msg) => (
             <div key={msg.id} className="flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2">
-              <span className="text-cyber-volt shrink-0 font-bold">&gt;</span>
+              <span className={`shrink-0 font-bold ${msg.sender === 'User' ? 'text-[#aac8ff]' : 'text-cyber-volt'}`}>&gt;</span>
               <div className="space-y-2 w-full">
                 {!msg.isRecommendation ? (
-                  <p className={`${msg.sender === 'System' ? 'text-on-surface-variant opacity-70' : 'text-cyber-volt'}`}>{msg.text}</p>
+                  <div>
+                    {msg.sender === 'User' && <div className="text-[9px] font-label-caps text-[#aac8ff]/60 mb-1">{msg.senderLabel || 'YOU'}</div>}
+                    {msg.sender === 'AI' && <div className="text-[9px] font-label-caps text-cyber-volt/60 mb-1 flex items-center gap-1">COPILOT_IQ {msg.streaming && <span className="material-symbols-outlined text-[10px] animate-spin">autorenew</span>}</div>}
+                    <p className={`leading-relaxed ${
+                      msg.sender === 'System' ? 'text-on-surface-variant opacity-70' :
+                      msg.sender === 'User' ? 'text-[#aac8ff]' : 'text-cyber-volt'
+                    }`}>{msg.text || (msg.streaming ? '▋' : '')}</p>
+                  </div>
                 ) : (
                   <div className="bg-cyber-volt/5 border-l-2 border-cyber-volt p-3 mt-2 flex flex-col gap-2">
+                    <div className="text-[9px] font-label-caps text-cyber-volt/60 mb-1">COPILOT_IQ // RECOMMENDATION</div>
                     <p className="text-white text-xs">{msg.text}</p>
                     {!msg.actionTaken ? (
                       <div className="flex gap-2 mt-2">
@@ -316,6 +338,11 @@ const LiveOpsModule = ({ messages, input, setInput, handleCommand, handleRecomme
             </div>
           ))}
         </div>
+        {aiError && (
+          <div className="mb-2 bg-[#ffb4ab]/10 border border-[#ffb4ab]/30 text-[#ffb4ab] px-3 py-1.5 text-[10px] font-label-caps flex items-center gap-2 rounded">
+            <span className="material-symbols-outlined text-sm">error</span>{aiError}
+          </div>
+        )}
         <form onSubmit={handleCommand} className="relative mt-auto">
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
             <span className="text-cyber-volt font-bold">&gt;</span>
@@ -323,11 +350,12 @@ const LiveOpsModule = ({ messages, input, setInput, handleCommand, handleRecomme
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-32 py-3 text-sm focus:border-cyber-volt focus:outline-none text-cyber-volt font-mono placeholder:text-white/20 transition-all"
-            placeholder="QUERY_SYSTEM_OR_SEND_COMMAND..."
+            disabled={isAiTyping}
+            className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-32 py-3 text-sm focus:border-cyber-volt focus:outline-none text-cyber-volt font-mono placeholder:text-white/20 transition-all disabled:opacity-50"
+            placeholder={apiKey ? 'Ask CopilotIQ anything...' : 'Set API key to activate AI...'}
             type="text"
           />
-          <button type="submit" className="absolute right-2 top-2 bottom-2 bg-cyber-volt text-black px-6 font-label-caps text-[10px] hover:brightness-110 transition-all">EXEC_CMD</button>
+          <button type="submit" disabled={isAiTyping || !input.trim()} className="absolute right-2 top-2 bottom-2 bg-cyber-volt text-black px-6 font-label-caps text-[10px] hover:brightness-110 transition-all disabled:opacity-40">EXEC_CMD</button>
         </form>
       </div>
     </section>
@@ -355,19 +383,61 @@ const CommandDashboard = ({ staff, onLogout }) => {
     { id: 3, sender: 'AI', text: 'RECOMMENDATION: Suggest opening Gate 8 and re-routing auxiliary staff to Sector C. Dispatch unit Alpha-9 for crowd redistribution.', isRecommendation: true, actionTaken: null },
   ]);
   const [input, setInput] = useState('');
+  const [isAiTyping, setIsAiTyping] = useState(false);
+  const [aiError, setAiError] = useState('');
+  const [showKeyModal, setShowKeyModal] = useState(false);
+  const terminalRef = useRef(null);
+  const chatSessionRef = useRef(null);
+  const { apiKey } = useGeminiKey();
 
   // Determine allowed tabs for logged-in role
   const tierKey = getTierKey(staff?.tier);
   const allowedTabs = ROLE_ACCESS[tierKey] || ['LIVE_OPS'];
 
-  const handleCommand = (e) => {
+  // Init/re-init Gemini chat session
+  useEffect(() => {
+    if (apiKey) {
+      chatSessionRef.current = createCopilotChat(apiKey);
+      setAiError('');
+    }
+  }, [apiKey]);
+
+  // Auto-scroll terminal
+  useEffect(() => {
+    if (terminalRef.current) terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+  }, [messages]);
+
+  const handleCommand = async (e) => {
     e.preventDefault();
-    if (input.trim()) {
-      setMessages([...messages, { id: Date.now(), sender: 'User', text: input }]);
-      setInput('');
-      setTimeout(() => {
-        setMessages((prev) => [...prev, { id: Date.now(), sender: 'AI', text: 'Command acknowledged. Processing parameters and querying local DB...' }]);
-      }, 1000);
+    if (!input.trim()) return;
+
+    if (!apiKey) {
+      setShowKeyModal(true);
+      return;
+    }
+
+    const userText = input.trim();
+    const senderLabel = staff?.name || 'OPERATOR';
+    setMessages(prev => [...prev, { id: Date.now(), sender: 'User', senderLabel, text: userText }]);
+    setInput('');
+    setIsAiTyping(true);
+    setAiError('');
+
+    const aiId = Date.now() + 1;
+    setMessages(prev => [...prev, { id: aiId, sender: 'AI', text: '', streaming: true }]);
+
+    try {
+      if (!chatSessionRef.current) chatSessionRef.current = createCopilotChat(apiKey);
+      await sendMessageStream(chatSessionRef.current, userText, (partial) => {
+        setMessages(prev => prev.map(m => m.id === aiId ? { ...m, text: partial } : m));
+      });
+      setMessages(prev => prev.map(m => m.id === aiId ? { ...m, streaming: false } : m));
+    } catch (err) {
+      console.error(err);
+      setAiError('AI error — check your API key.');
+      setMessages(prev => prev.filter(m => m.id !== aiId));
+    } finally {
+      setIsAiTyping(false);
     }
   };
 
@@ -384,7 +454,7 @@ const CommandDashboard = ({ staff, onLogout }) => {
 
     switch (activeTab) {
       case 'LIVE_OPS':
-        return <LiveOpsModule messages={messages} input={input} setInput={setInput} handleCommand={handleCommand} handleRecommendationAction={handleRecommendationAction} />;
+        return <LiveOpsModule messages={messages} input={input} setInput={setInput} handleCommand={handleCommand} handleRecommendationAction={handleRecommendationAction} isAiTyping={isAiTyping} aiError={aiError} showKeyModal={showKeyModal} setShowKeyModal={setShowKeyModal} apiKey={apiKey} />;
       case 'INCIDENTS':
         return <IncidentsModule />;
       case 'DISPATCH':
@@ -398,6 +468,7 @@ const CommandDashboard = ({ staff, onLogout }) => {
 
   return (
     <div className="bg-black text-[#e5e2e1] min-h-[100dvh] font-body-md selection:bg-cyber-volt selection:text-black">
+      {showKeyModal && <ApiKeyModal onClose={() => setShowKeyModal(false)} />}
       {/* CRT scanline */}
       <div className="fixed inset-0 pointer-events-none opacity-5 z-[100]" style={{
         background: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06))',
