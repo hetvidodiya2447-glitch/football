@@ -1,12 +1,12 @@
 <div align="center">
-  <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdhp-a2aYjMJ9HlFq-cgaPJQ2RYId7XLKYL8n1gMuUf_-_8yidAD03RDTdWGa2tIp82htJ7x0xwl0Vxrkt9MTmrMfos6J1BniCFqyJohGyUK-QUOf4fjEoUdlFuOhbqVZ1CkSfOJvtocehQEY-sGh9PXWWvDoqxVd0Njk_jFYfcpbcGb6pZniEra1snMAFZxINC6e3F7MLRtJHz-puBuVlUbcsAcwxYFk3SiYIF7igx4zZlJTH3x6evw" alt="StadiumIQ Logo" width="120" />
+  <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdhp-a2aYjMJ9HlFq-cgaPJQ2RYId7XLKYL8n1gMuUf_-_8yidAD03RDTdWGa2tIp82htJ7x0xwl0Vxrkt9MTmrMfos6J1BniCFqyJohGyUK-QUOf4fjEoUdlFuOhbqVZ1CkSfOJvtocehQEY-sGh9PXWWvDoqxVd0Njk_jFYfcpbcGb6pZniEra1snMAFZxINC6e3F7MLRtJHz-puBuVlUbcsAcwxYFk3SiYIF7igx4zZlJTH3x6evw" alt="Stadium Buddy Logo" width="120" />
 
-  # ⚡ StadiumIQ ⚡
+  # ⚡ STADIUM BUDDY ⚡
 
   <p><b>Your Next-Generation Smart Venue Operating System</b></p>
   
   <a href="https://stadium-buddy.vercel.app/" target="_blank">
-    <img src="https://img.shields.io/badge/🚀_Live_Demo-StadiumIQ-primary?style=for-the-badge&color=2563EB" alt="Live Demo" />
+    <img src="https://img.shields.io/badge/🚀_Live_Demo-Stadium_Buddy-primary?style=for-the-badge&color=DFFF00&labelColor=000000" alt="Live Demo" />
   </a>
   <br><br>
   
@@ -20,16 +20,16 @@
 
 ---
 
-## 🎮 What is StadiumIQ?
+## 🎮 What is Stadium Buddy?
 
 Ever wondered what it feels like to run a massive stadium with the push of a button? 🏟️ 
 
-**StadiumIQ** is a fully dynamic, role-based platform that brings venue management into the future. Whether you're an **Organizer** preventing a crowd bottleneck, a **Staff** member handling a medical emergency, or a **Fan** grabbing a pre-match burger combo—StadiumIQ handles it all in real-time.
+**Stadium Buddy** is a fully dynamic, role-based platform that brings venue management into the future. Whether you're an **Organizer** preventing a crowd bottleneck, a **Staff** member handling a medical emergency, or a **Fan** grabbing a pre-match burger combo—Stadium Buddy handles it all in real-time.
 
 <details>
 <summary><b>✨ Click here to see the Magic behind the curtain!</b></summary>
 <br>
-We use a <b>Live Telemetry Crowd Engine</b> to simulate wait times, a <b>Multilingual GenAI Engine</b> to translate the app into 20+ languages instantly, and <b>OSM Live Data</b> to let you deploy this OS into literally *any* major stadium in the world.
+We use a <b>Live Telemetry Crowd Engine</b> to simulate wait times, a <b>Multilingual GenAI Translation Engine</b> to localize the app into 5+ languages instantly, and <b>OSM Live Data</b> to let you deploy this OS into literally *any* major stadium in the world.
 </details>
 
 ---
@@ -45,11 +45,24 @@ We use a <b>Live Telemetry Crowd Engine</b> to simulate wait times, a <b>Multili
 > Search for **Wembley**, **Camp Nou**, or *any* local stadium using our live OpenStreetMap integration. One click deploys a custom OS instance for that exact location. Boom. 💥
 
 ### 🤖 Smart GenAI Translations
-Bonjour? Hola? こんにちは?
-The app dynamically translates everything—from UI buttons to live emergency announcements—using the **Google Cloud Translation API** (with full RTL support!).
+Bonjour? Hola? العربية?
+The app dynamically translates everything—from UI buttons to live emergency announcements—using a locale-aware translation helper (with full RTL support!).
 
 ### 🌦️ Hyper-Local Weather
 Is it going to rain on the pitch? The **OpenWeather API** keeps fans and admins informed with live metrics right on the dashboard.
+
+---
+
+## 🎨 Visual Identity & Design System
+
+The aesthetic follows a **Cyber-Athletic** movement: a fusion of futuristic Neo-Brutalism and Glassmorphism. The interface evokes a sense of "digital precision" and "kinetic energy." It utilizes high-contrast visuals, data-dense layouts, and technical flourishes like scanlines and neon glows.
+
+- **Background**: Midnight Black (`#000000`) base to maximize contrast and power efficiency.
+- **Primary Accent (Cyber Volt)**: A high-visibility neon yellow-green (`#DFFF00`) used exclusively for critical actions, success states, and primary data points.
+- **Secondary Accent (Electric Violet)**: An energetic purple (`#DCB8FF`) for interactive actions, highlights, and secondary sets.
+- **Typography**: The variable font family **Anybody** is used exclusively to create a technical, high-performance atmosphere. Headlines utilize Bold and Italic Expanded weights to command attention, while body text remains in cased normal weight.
+- **CRT Scanlines**: A subtle, horizontal scanline pattern overlay on the viewport enhances the futuristic monitor HUD aesthetic.
+- **Glassmorphism**: Translucent Slate Grey containers (`rgba(26, 26, 26, 0.7)`) with background blurs and thin muted borders act as the structural frames of all cards.
 
 ---
 
@@ -58,10 +71,10 @@ Is it going to rain on the pitch? The **OpenWeather API** keeps fans and admins 
 | Category | Tech |
 | :--- | :--- |
 | **Core** | React 18, Vite |
-| **Styling** | Tailwind CSS (Glassmorphism & Neon themes) |
-| **Backend & Auth** | Supabase |
-| **APIs** | Google Cloud Translation, OpenWeather, Nominatim (OSM) |
-| **Icons** | Lucide React, Material Symbols |
+| **Styling** | Tailwind CSS (Cyber-Athletic Theme) |
+| **Backend & Auth** | Supabase Client v2 |
+| **APIs** | Nominatim (OSM Map coordinates), OpenWeather API |
+| **Icons** | Lucide React |
 
 ---
 
@@ -95,12 +108,6 @@ VITE_OPENWEATHER_API_KEY=your_openweather_api_key
 npm run dev
 ```
 Open up `http://localhost:5173` and prepare to be amazed. ✨
-
----
-
-## 🎨 Design Vibe
-Think **Cyberpunk meets Mission Control**. 
-We've packed the UI with translucent glass effects, pulsing neon accents, and smooth micro-animations. It doesn't just work—it feels *alive*. 
 
 ---
 
