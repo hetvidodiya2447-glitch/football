@@ -1,9 +1,0 @@
-{
-  "buildCommand": "cd vamos-ai && npm install && npm run build",
-  "outputDirectory": "vamos-ai/dist",
-  "installCommand": "echo 'skip root install'",
-  "framework": "vite",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}

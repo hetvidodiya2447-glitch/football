@@ -1,0 +1,397 @@
+import React, { useState, useEffect, useMemo } from "react";
+import { STADIUMS } from "../data/stadiums";
+
+import Button from '../components/ui/Button';
+import Card from '../components/ui/Card';
+import Input from '../components/ui/Input';
+import Badge from '../components/ui/Badge';
+import { Search, X, ArrowRight, Loader2, Zap } from 'lucide-react';
+
+// List of popular stadiums for quick-select chips
+const FEATURED_STADIUMS = [
+  { stadium: "Wembley Stadium", city: "London", country: "England", capacity: 90000, hometeams: "England", confederation: "UEFA" },
+  { stadium: "Camp Nou", city: "Barcelona", country: "Spain", capacity: 99354, hometeams: "FC Barcelona", confederation: "UEFA" },
+  { stadium: "Santiago Bernabéu", city: "Madrid", country: "Spain", capacity: 81044, hometeams: "Real Madrid", confederation: "UEFA" },
+  { stadium: "Maracanã", city: "Rio de Janeiro", country: "Brazil", capacity: 78838, hometeams: "Flamengo, Fluminense", confederation: "CONMEBOL" },
+  { stadium: "Allianz Arena", city: "Munich", country: "Germany", capacity: 75000, hometeams: "Bayern Munich", confederation: "UEFA" },
+  { stadium: "San Siro", city: "Milan", country: "Italy", capacity: 80018, hometeams: "AC Milan, Inter Milan", confederation: "UEFA" }
+];
+
+export default function LandingPage({ onDeploy }) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedStadium, setSelectedStadium] = useState(FEATURED_STADIUMS[0]);
+  
+  // Deployment simulation states
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [deployStep, setDeployStep] = useState(0);
+
+  // Global search states (All world stadiums via OSM)
+  const [globalResults, setGlobalResults] = useState([]);
+  const [isSearchingGlobally, setIsSearchingGlobally] = useState(false);
+
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setGlobalResults([]);
+      return;
+    }
+
+    setIsSearchingGlobally(true);
+    const delayDebounceFn = setTimeout(() => {
+      // Fetch sports stadiums matching search query globally from Nominatim OSM API
+      const searchUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(searchQuery + ' stadium')}&format=json&addressdetails=1&limit=5`;
+      
+      fetch(searchUrl, {
+        headers: {
+          "User-Agent": "Stadium-Buddy-Hackathon-App/1.0"
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data) {
+            // Map OSM objects to Stadium Buddy schema
+            const mapped = data.map(item => {
+              const address = item.address || {};
+              const name = item.display_name.split(',')[0];
+              const city = address.city || address.town || address.village || address.suburb || address.state || "";
+              const country = address.country || "";
+              
+              return {
+                s_no: `global-${item.place_id}`,
+                confederation: item.class === "leisure" ? "Global Leisure" : "Global Venue",
+                stadium: name,
+                city: city,
+                country: country,
+                capacity: 50000, // default placeholder capacity for dynamic scaling
+                hometeams: "Local Teams / Multi-Sport",
+                ioc: address.country_code?.toUpperCase() || "GL"
+              };
+            });
+            setGlobalResults(mapped);
+          }
+        })
+        .catch(err => console.error("Global search failed:", err))
+        .finally(() => setIsSearchingGlobally(false));
+    }, 500); // 500ms debounce delay
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
+  const deployMessages = [
+    "Injecting local stadium node graph...",
+    "Calibrating crowd-density sensors...",
+    "Activating decision-support RAG logs...",
+    "Tuning locale-aware multilingual helpers...",
+    "Stadium Buddy Operations Engine online!"
+  ];
+
+  // Search filter
+  const filteredStadiums = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    
+    const query = searchQuery.toLowerCase();
+    return STADIUMS.filter(
+      (s) =>
+        s.stadium.toLowerCase().includes(query) ||
+        s.city.toLowerCase().includes(query) ||
+        s.country.toLowerCase().includes(query) ||
+        (s.hometeams && s.hometeams.toLowerCase().includes(query))
+    ).slice(0, 8); // cap results for clean dropdown UI
+  }, [searchQuery]);
+
+  const handleSelectStadium = (stadium) => {
+    setSelectedStadium(stadium);
+    setSearchQuery(""); // close dropdown
+  };
+
+  const handleDeployClick = () => {
+    setIsDeploying(true);
+    setDeployStep(0);
+
+    const stepInterval = setInterval(() => {
+      setDeployStep((s) => {
+        if (s < deployMessages.length - 1) {
+          return s + 1;
+        } else {
+          clearInterval(stepInterval);
+          setTimeout(() => {
+            onDeploy(selectedStadium);
+          }, 800);
+          return s;
+        }
+      });
+    }, 600);
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-on-surface flex flex-col relative overflow-hidden px-4 py-8 md:p-12 font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+      <div className="scanlines"></div>
+      
+      {/* Background neon blur overlays */}
+      <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-primary-fixed/5 blur-[150px] pointer-events-none" />
+      <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-secondary/5 blur-[150px] pointer-events-none" />
+
+      {/* Header bar */}
+      <header className="max-w-[1200px] w-full mx-auto flex justify-between items-center mb-12 relative z-10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded border border-primary-fixed/30 bg-surface-container flex items-center justify-center shadow-lg">
+            <span className="material-symbols-outlined text-primary-fixed text-2xl animate-pulse">sports_soccer</span>
+          </div>
+          <div>
+            <h1 className="text-xl font-bold italic tracking-widest text-primary-fixed volt-text-glow font-display-lg uppercase">STADIUM BUDDY</h1>
+            <p className="text-[9px] text-on-surface-variant font-mono uppercase tracking-[0.2em] font-label-caps">Smart Venue OS</p>
+          </div>
+        </div>
+        <div className="flex gap-1.5 px-3 py-1 rounded border border-outline-variant/30 bg-surface-container-high/50 text-[10px] font-mono text-on-surface uppercase font-label-caps">
+          <span>DATA ENGINE: CONNECTED</span>
+        </div>
+      </header>
+
+      {/* Main hero & search layout */}
+      <main className="max-w-[1200px] w-full mx-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+        
+        {/* Left column: Hero & Search dropdown */}
+        <div className="lg:col-span-7 flex flex-col">
+          <span className="text-secondary font-mono text-xs font-bold tracking-widest uppercase mb-3 font-label-caps">
+            GENAI SMART STADIUM OPERATING SYSTEM
+          </span>
+          <h2 className="text-display-lg text-white mb-6 font-display-lg uppercase italic leading-none tracking-tighter">
+            INSTANTLY ORCHESTRATE <br />
+            ANY STADIUM ON EARTH.
+          </h2>
+          <p className="text-body-lg text-on-surface-variant/85 max-w-xl mb-10 font-body-lg">
+            Select any venue from our catalog of 1,820 global stadiums. Stadium Buddy leverages Generative AI to map wayfinding paths, draft live crowd advisories, deploy security personnel, and handle fans in 5+ languages.
+          </p>
+
+          {/* SEARCH COMPONENT */}
+          <div className="relative w-full max-w-xl mb-6">
+            <div className="relative flex items-center">
+              <Input
+                type="text"
+                placeholder="Search 1,820+ catalog stadiums or any sports arena in the world..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                icon={Search}
+                className="py-3 shadow-xl"
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery("")} 
+                  className="absolute right-3 text-outline-variant hover:text-on-surface"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              )}
+            </div>
+
+            {/* Dropdown results */}
+            {searchQuery && (
+              <div className="absolute left-0 right-0 mt-2 bg-surface-container-high border border-outline-variant/50 rounded-xl overflow-hidden shadow-2xl z-50 backdrop-blur-xl max-h-[360px] overflow-y-auto">
+                
+                {/* Catalog matches */}
+                {filteredStadiums.length > 0 && (
+                  <div>
+                    <div className="px-5 py-1.5 bg-surface-container-highest/60 text-[9px] font-mono font-bold text-outline-variant uppercase tracking-wider">
+                      Catalog Venues
+                    </div>
+                    <div className="divide-y divide-outline-variant/10">
+                      {filteredStadiums.map((s, idx) => (
+                        <Button
+                          key={idx}
+                          onClick={() => handleSelectStadium(s)}
+                          className="w-full text-left px-5 py-2.5 hover:bg-primary-container/20 flex justify-between items-center transition-colors group"
+                        >
+                          <div>
+                            <div className="font-bold text-on-surface group-hover:text-primary-light text-sm">{s.stadium}</div>
+                            <div className="text-xs text-on-surface-variant mt-0.5">
+                              {s.city}, {s.country}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono bg-surface-container px-2 py-0.5 rounded text-outline-variant">
+                              {s.capacity ? s.capacity.toLocaleString() : "N/A"} seats
+                            </span>
+                            <span className="material-symbols-outlined text-outline-variant text-sm group-hover:translate-x-1 transition-all">
+                              arrow_forward
+                            </span>
+                          </div>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Global OSM Live matches */}
+                {globalResults.length > 0 && (
+                  <div className="border-t border-outline-variant/20">
+                    <div className="px-5 py-1.5 bg-surface-container-highest/60 text-[9px] font-mono font-bold text-outline-variant uppercase tracking-wider flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
+                      <span>Global World Venues (OSM Live)</span>
+                    </div>
+                    <div className="divide-y divide-outline-variant/10">
+                      {globalResults.map((s, idx) => (
+                        <Button
+                          key={idx}
+                          onClick={() => handleSelectStadium(s)}
+                          className="w-full text-left px-5 py-2.5 hover:bg-secondary-container/20 flex justify-between items-center transition-colors group"
+                        >
+                          <div>
+                            <div className="font-bold text-on-surface group-hover:text-secondary text-sm">{s.stadium}</div>
+                            <div className="text-xs text-on-surface-variant mt-0.5">
+                              {s.city || "Unknown City"}, {s.country || "Unknown Country"}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-mono bg-surface-container px-2 py-0.5 rounded text-outline-variant">
+                              World Map
+                            </span>
+                            <span className="material-symbols-outlined text-outline-variant text-sm group-hover:translate-x-1 transition-all">
+                              arrow_forward
+                            </span>
+                          </div>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Loading indicator */}
+                {isSearchingGlobally && (
+                  <div className="p-3 text-center text-xs text-outline-variant font-mono flex items-center justify-center gap-2">
+                    <span className="material-symbols-outlined text-xs animate-spin">sync</span>
+                    <span>SEARCHING GLOBALLY...</span>
+                  </div>
+                )}
+
+                {filteredStadiums.length === 0 && globalResults.length === 0 && !isSearchingGlobally && (
+                  <div className="p-4 text-center text-xs text-on-surface-variant font-mono">
+                    NO STADIUMS FOUND
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Quick select chips */}
+          <div className="flex flex-wrap items-center gap-2 max-w-xl">
+            <span className="text-label-caps text-outline font-label-caps uppercase mr-1">Popular:</span>
+            {FEATURED_STADIUMS.map((item, idx) => {
+              return (
+                <Button
+                  key={idx}
+                  size="sm"
+                  variant={selectedStadium.stadium === item.stadium ? "secondary" : "outline"}
+                  onClick={() => handleSelectStadium(item)}
+                >
+                  {item.stadium}
+                </Button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Right column: Stadium card & Deploy simulation */}
+        <div className="lg:col-span-5 relative w-full max-w-md mx-auto">
+          {isDeploying ? (
+            /* DEPLOYMENT PROCESS STATUS CARD */
+            <Card className="relative overflow-hidden min-h-[380px] flex flex-col justify-between border-primary-fixed/20 bg-surface-container-low/70 shadow-[0_0_20px_rgba(223,255,0,0.05)]">
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary-fixed/5 to-transparent pointer-events-none" />
+              
+              <div>
+                <div className="flex items-center justify-between border-b border-outline-variant/20 pb-4 mb-6">
+                  <h3 className="text-label-caps font-label-caps text-primary-fixed volt-text-glow font-bold uppercase">
+                    INITIALIZING DEPLOYMENT
+                  </h3>
+                  <Loader2 className="h-5 w-5 text-secondary animate-spin" />
+                </div>
+
+                <div className="space-y-4">
+                  {deployMessages.slice(0, deployStep + 1).map((msg, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`flex gap-3 text-xs leading-relaxed transition-all duration-300 font-label-caps ${
+                        idx === deployStep ? "text-primary-fixed volt-text-glow font-bold" : "text-on-surface-variant/50"
+                      }`}
+                    >
+                      <span className="text-primary-fixed font-mono">&gt;</span>
+                      <span>{msg.toUpperCase()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Progress bar at bottom of deployment card */}
+              <div className="pt-6 mt-6 border-t border-outline-variant/20 flex flex-col gap-2">
+                <div className="w-full h-1 bg-surface-container-high rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary-fixed transition-all duration-300 shadow-[0_0_10px_#dfff00]"
+                    style={{ width: `${((deployStep + 1) / deployMessages.length) * 100}%` }}
+                  />
+                </div>
+              </div>
+            </Card>
+          ) : (
+            /* SELECTED STADIUM PROFILE CARD */
+            <Card hoverable className="relative overflow-hidden flex flex-col min-h-[380px] justify-between bg-surface-container-low/70 border-outline-variant/30">
+              {/* Profile Card Header overlay */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary-fixed/5 to-transparent pointer-events-none" />
+              
+              <div>
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <Badge variant="info">
+                      {selectedStadium.confederation}
+                    </Badge>
+                    <h3 className="text-headline-sm font-headline-sm text-white italic uppercase tracking-tight mt-3">
+                      {selectedStadium.stadium}
+                    </h3>
+                    <p className="text-[10px] text-on-surface-variant font-label-caps uppercase mt-1">
+                      {selectedStadium.city}, {selectedStadium.country}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Profile attributes */}
+                <div className="space-y-3.5 border-t border-b border-outline-variant/20 py-5 my-5 text-xs font-label-caps">
+                  <div className="flex justify-between items-center">
+                    <span className="text-on-surface-variant/80">HOME TEAM(S)</span>
+                    <span className="font-bold text-right max-w-[200px] truncate text-white uppercase">
+                      {selectedStadium.hometeams || "VARIOUS CLUBS / NATIONAL TEAM"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-on-surface-variant/80">CAPACITY LIMIT</span>
+                    <span className="font-mono font-bold text-primary-fixed volt-text-glow text-right text-sm">
+                      {selectedStadium.capacity.toLocaleString()} SEATS
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-on-surface-variant/80">IOC CODE</span>
+                    <span className="font-mono text-white text-right font-bold">
+                      {selectedStadium.ioc}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <Button
+                onClick={handleDeployClick}
+                variant="primary"
+                className="w-full flex justify-center items-center gap-2 py-3"
+                size="lg"
+              >
+                <Zap className="h-4 w-4" />
+                DEPLOY STADIUM BUDDY LAYER
+              </Button>
+            </Card>
+          )}
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="max-w-[1200px] w-full mx-auto text-center text-[10px] text-outline font-mono uppercase tracking-[0.2em] mt-12 relative z-10 pt-6 border-t border-outline-variant/20">
+        STADIUM BUDDY DATACENTER CATALOG • 1,820 NODES ONLINE
+      </footer>
+    </div>
+  );
+}
