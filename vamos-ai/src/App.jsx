@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
 import CompanionHome from './pages/CompanionHome';
 import CommandDashboard from './pages/CommandDashboard';
-import StaffLogin from './pages/StaffLogin';
+import OptimusPage from './pages/OptimusPage';
+import AppShell from './components/AppShell';
 
 function App() {
   const [staff, setStaff] = useState(null);
@@ -18,15 +20,36 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/companion" />} />
-        <Route path="/companion" element={<CompanionHome />} />
-        <Route path="/login" element={<StaffLogin onLogin={handleLogin} />} />
+        {/* Landing Page (Stand-alone minimalist portal) */}
+        <Route path="/" element={<LandingPage />} />
+
+        {/* Companion Workspace */}
+        <Route
+          path="/companion"
+          element={
+            <AppShell staff={staff} onLogout={handleLogout}>
+              <CompanionHome />
+            </AppShell>
+          }
+        />
+
+        {/* Command Center Workspace (with inline authorization) */}
         <Route
           path="/command"
           element={
-            staff
-              ? <CommandDashboard staff={staff} onLogout={handleLogout} />
-              : <Navigate to="/login" />
+            <AppShell staff={staff} onLogout={handleLogout}>
+              <CommandDashboard staff={staff} onLogin={handleLogin} onLogout={handleLogout} />
+            </AppShell>
+          }
+        />
+
+        {/* Optimus Telemetry Workspace */}
+        <Route
+          path="/optimus"
+          element={
+            <AppShell staff={staff} onLogout={handleLogout}>
+              <OptimusPage />
+            </AppShell>
           }
         />
       </Routes>

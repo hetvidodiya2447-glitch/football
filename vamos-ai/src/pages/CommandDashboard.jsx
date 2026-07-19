@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { createCopilotChat, sendMessageStream, getErrorMessage } from '../services/gemini';
 
 // ─── Role → allowed tabs ────────────────────────────────────────────────────
@@ -16,7 +15,13 @@ const getTierKey = (tier) => {
   return 'TIER 2 ACCESS';
 };
 
-// ─── Tab icons ───────────────────────────────────────────────────────────────
+// ─── Demo Credentials List ──────────────────────────────────────────────────
+const VALID_CREDENTIALS = [
+  { username: 'admin', password: 'admin123', name: 'ADMIN_ROOT', tier: 'TIER 5 — FULL ACCESS' },
+  { username: 'operator', password: 'ops2026', name: 'OPERATOR_01', tier: 'TIER 4 ACCESS' },
+  { username: 'staff', password: 'staff123', name: 'STAFF_FIELD', tier: 'TIER 2 ACCESS' },
+];
+
 const TAB_ICONS = {
   LIVE_OPS:  'sensors',
   INCIDENTS: 'warning_amber',
@@ -24,7 +29,7 @@ const TAB_ICONS = {
   REPORTING: 'bar_chart',
 };
 
-// ─── Module content renderers ────────────────────────────────────────────────
+// ─── Module Content Subcomponents ──────────────────────────────────────────
 
 const IncidentsModule = () => (
   <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
@@ -175,108 +180,27 @@ const ReportingModule = () => (
 
 const LiveOpsModule = ({ messages, input, setInput, handleCommand, handleRecommendationAction, isAiTyping, aiError }) => (
   <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
-    {/* Live Ops Header */}
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div className="flex items-center gap-3">
-        <div className="bg-cyber-volt text-black px-3 py-1 font-label-caps text-xs flex items-center gap-2 shadow-[0_0_10px_#DFFF00]">
-          <span className="w-2 h-2 rounded-full bg-black animate-pulse"></span>
-          LIVE_OPS_OVERVIEW
-        </div>
-        <span className="text-on-surface-variant text-[10px] font-label-caps">KICK-OFF IN 45:00</span>
-      </div>
-      <div className="flex gap-2">
-        <button className="bg-[#2a2a2a] border border-[#454932] px-4 py-1.5 text-label-caps text-white hover:border-cyber-volt transition-all text-[10px]">REFRESH_DATA</button>
-        <button className="bg-cyber-volt border border-black px-4 py-1.5 text-label-caps text-black hover:brightness-110 transition-all text-[10px]">GENERATE_REPORT</button>
-      </div>
-    </div>
-
     {/* Metrics Row */}
-    <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div className="md:col-span-2 glass-panel p-6 relative overflow-hidden group hover:border-cyber-volt/50 transition-colors">
+    <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="glass-panel p-5 relative overflow-hidden">
         <div className="tech-id mb-2">METRIC_ATTENDANCE_01</div>
-        <div className="flex justify-between items-end">
-          <div>
-            <div className="font-label-caps text-label-caps text-on-surface-variant opacity-60">TOTAL ATTENDANCE</div>
-            <div className="font-display-xl text-[56px] leading-tight text-cyber-volt mt-1" style={{ textShadow: '0 0 10px rgba(223, 255, 0, 0.5)' }}>54,892</div>
-          </div>
-          <div className="text-right">
-            <div className="text-cyber-volt flex items-center gap-1 font-label-caps text-xs">
-              <span className="material-symbols-outlined text-sm">trending_up</span>+2.4%
-            </div>
-            <div className="font-label-caps text-[10px] text-on-surface-variant">CAPACITY: 91.5%</div>
-          </div>
-        </div>
-        <div className="mt-4 h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-          <div className="h-full bg-cyber-volt w-[91.5%] shadow-[0_0_10px_#DFFF00]"></div>
+        <div className="font-label-caps text-[9px] text-on-surface-variant opacity-60">TOTAL ATTENDANCE</div>
+        <div className="font-display-xl text-[36px] font-bold leading-tight text-cyber-volt mt-1">54,892</div>
+        <div className="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+          <div className="h-full bg-cyber-volt w-[91.5%]"></div>
         </div>
       </div>
 
-      <div className="glass-panel p-6 relative overflow-hidden hover:border-[#ffb4ab]/50 transition-colors">
+      <div className="glass-panel p-5 relative overflow-hidden">
         <div className="tech-id mb-2">METRIC_FLOW_02</div>
-        <div className="font-label-caps text-label-caps text-on-surface-variant opacity-60">GATE_FLOW_RATE</div>
-        <div className="font-display-xl text-[48px] leading-tight text-white mt-1">142<span className="text-2xl opacity-40">/min</span></div>
-        <p className="mt-3 text-[10px] font-label-caps text-[#ffb4ab] uppercase flex items-center gap-1">
-          <span className="material-symbols-outlined text-[12px]">warning</span>CONGESTION ALERT: GATE 7
-        </p>
+        <div className="font-label-caps text-[9px] text-on-surface-variant opacity-60">GATE_FLOW_RATE</div>
+        <div className="font-display-xl text-[36px] font-bold leading-tight text-white mt-1">142<span className="text-sm opacity-40">/min</span></div>
       </div>
 
-      <div className="glass-panel p-6 relative overflow-hidden hover:border-cyber-volt/50 transition-colors">
+      <div className="glass-panel p-5 relative overflow-hidden">
         <div className="tech-id mb-2">METRIC_LOGISTICS_03</div>
-        <div className="font-label-caps text-label-caps text-on-surface-variant opacity-60">CONCESSION_LOAD</div>
-        <div className="font-display-xl text-[48px] leading-tight text-white mt-1">78<span className="text-2xl opacity-40">%</span></div>
-        <p className="mt-3 text-[10px] font-label-caps text-cyber-volt uppercase flex items-center gap-1">
-          <span className="material-symbols-outlined text-[12px]">schedule</span>AVG WAIT: 4.2 MIN
-        </p>
-      </div>
-    </section>
-
-    {/* Main Heatmap & Zone Status */}
-    <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div className="lg:col-span-8 glass-panel min-h-[400px] relative overflow-hidden border-[#454932] group">
-        <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-          <div className="bg-black/80 backdrop-blur-md px-3 py-1.5 border border-cyber-volt/30 rounded flex items-center gap-3">
-            <span className="material-symbols-outlined text-cyber-volt text-sm">videocam</span>
-            <span className="font-label-caps text-[10px]">LIVE FEED: SECTOR_A7</span>
-            <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></div>
-          </div>
-        </div>
-        <div className="absolute inset-0 grayscale opacity-20 transition-transform duration-1000 group-hover:scale-105" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1577223625816-7546f13df25d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')", backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
-        <div className="absolute inset-0 pointer-events-none opacity-60 animate-pulse" style={{ background: 'radial-gradient(circle at 40% 50%, rgba(223, 255, 0, 0.4) 0%, transparent 40%), radial-gradient(circle at 70% 30%, rgba(255, 60, 60, 0.3) 0%, transparent 30%)' }}></div>
-        <div className="absolute bottom-4 right-4 z-10 bg-black/80 backdrop-blur-md p-4 border border-white/10 rounded w-48">
-          <div className="font-label-caps text-[10px] text-on-surface-variant mb-2">HEATMAP_LEGEND</div>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2"><div className="w-3 h-3 bg-red-600 rounded-sm"></div><span className="text-[9px] font-label-caps uppercase">Critical (95%+)</span></div>
-            <div className="flex items-center gap-2"><div className="w-3 h-3 bg-cyber-volt rounded-sm"></div><span className="text-[9px] font-label-caps uppercase">Optimal (60-80%)</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div className="lg:col-span-4 space-y-4">
-        <h2 className="text-label-caps font-label-caps text-cyber-volt flex items-center gap-2">
-          <span className="w-1 h-4 bg-cyber-volt"></span>ZONE_STATUS_MONITOR
-        </h2>
-        <div className="grid grid-cols-1 gap-3">
-          <div className="glass-panel p-4 hover:border-cyber-volt/40 cursor-pointer transition-colors">
-            <div className="flex justify-between items-start mb-2">
-              <span className="tech-id">ZONE_NORTH_TIER</span>
-              <span className="bg-cyber-volt/20 text-cyber-volt px-2 py-0.5 text-[9px] font-label-caps">OPTIMAL</span>
-            </div>
-            <div className="flex justify-between items-end">
-              <h4 className="text-headline-sm font-bold">SECTION_A</h4>
-              <span className="text-headline-md text-cyber-volt" style={{ textShadow: '0 0 10px rgba(223, 255, 0, 0.5)' }}>88%</span>
-            </div>
-          </div>
-          <div className="glass-panel p-4 hover:border-[#ffb4ab]/40 cursor-pointer border-[#ffb4ab]/20 transition-colors">
-            <div className="flex justify-between items-start mb-2">
-              <span className="tech-id text-[#ffb4ab]/60">ZONE_SOUTH_TERRACE</span>
-              <span className="bg-[#ffb4ab]/20 text-[#ffb4ab] px-2 py-0.5 text-[9px] font-label-caps">HIGH_LOAD</span>
-            </div>
-            <div className="flex justify-between items-end">
-              <h4 className="text-headline-sm font-bold text-[#ffb4ab]">SECTION_D</h4>
-              <span className="text-headline-md text-[#ffb4ab]">96%</span>
-            </div>
-          </div>
-        </div>
+        <div className="font-label-caps text-[9px] text-on-surface-variant opacity-60">CONCESSION_LOAD</div>
+        <div className="font-display-xl text-[36px] font-bold leading-tight text-white mt-1">78<span className="text-sm opacity-40">%</span></div>
       </div>
     </section>
 
@@ -285,14 +209,13 @@ const LiveOpsModule = ({ messages, input, setInput, handleCommand, handleRecomme
       <div className="bg-cyber-volt text-black px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-sm">neurology</span>
-          <h3 className="font-label-caps text-[11px] font-bold tracking-widest italic">COPILOT_IQ_v4.2 // TERMINAL</h3>
+          <h3 className="font-label-caps text-[11px] font-bold tracking-widest italic">COPILOT_IQ // COGNITIVE TERMINAL</h3>
         </div>
-        <div className="flex items-center gap-3">
-          {isAiTyping && <span className="text-[9px] font-label-caps animate-pulse">GENERATING_RESPONSE...</span>}
-          {!isAiTyping && <span className="text-[9px] font-label-caps opacity-60">LOCAL RAG SYSTEM</span>}
+        <div className="flex items-center gap-2">
+          {isAiTyping && <span className="text-[9px] font-label-caps animate-pulse">THINKING...</span>}
           <div className="flex items-center gap-1 text-[8px] font-label-caps px-2 py-0.5 border border-black/40 text-black/60">
             <span className="material-symbols-outlined text-[10px]">check_circle</span>
-            OFFLINE
+            LOCAL RAG
           </div>
         </div>
       </div>
@@ -356,21 +279,25 @@ const LiveOpsModule = ({ messages, input, setInput, handleCommand, handleRecomme
   </div>
 );
 
-// ─── Restricted placeholder ──────────────────────────────────────────────────
+// ─── Restricted Placeholder ──────────────────────────────────────────────────
 const RestrictedModule = ({ tab }) => (
-  <div className="flex flex-col items-center justify-center min-h-[60vh] glass-panel border-dashed border-white/20">
-    <span className="material-symbols-outlined text-[64px] text-[#ffb4ab]/40 mb-4 animate-pulse">lock</span>
-    <h2 className="text-headline-sm font-bold text-primary mb-2">ACCESS DENIED</h2>
-    <p className="text-on-surface-variant text-center max-w-md">
-      The <span className="text-cyber-volt font-bold">{tab}</span> module requires higher clearance. Contact your administrator to request access.
+  <div className="flex flex-col items-center justify-center min-h-[40vh] glass-panel border-dashed border-white/20 py-12">
+    <span className="material-symbols-outlined text-[48px] text-[#ffb4ab]/40 mb-4 animate-pulse">lock</span>
+    <h2 className="text-sm font-bold text-primary mb-2">ACCESS RESTRICTED</h2>
+    <p className="text-on-surface-variant text-[11px] text-center max-w-xs">
+      The <span className="text-cyber-volt font-bold">{tab}</span> module requires higher credentials. Use the Clearance Swapper at the top to adjust your role.
     </p>
   </div>
 );
 
-// ─── Main Dashboard ──────────────────────────────────────────────────────────
-const CommandDashboard = ({ staff, onLogout }) => {
-  const navigate = useNavigate();
+// ─── Main Dashboard Component ───────────────────────────────────────────────
+const CommandDashboard = ({ staff, onLogin, onLogout }) => {
   const [activeTab, setActiveTab] = useState('LIVE_OPS');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
   const [messages, setMessages] = useState([
     { id: 1, sender: 'System', text: 'Analyzing crowd flow patterns in North-East quadrant...' },
     { id: 2, sender: 'System', text: 'Detecting surge at Section D-14. Bottle-neck predicted in T-minus 4 minutes. Average wait time trending toward +6m.' },
@@ -382,10 +309,6 @@ const CommandDashboard = ({ staff, onLogout }) => {
   const terminalRef = useRef(null);
   const chatSessionRef = useRef(null);
 
-  // Determine allowed tabs for logged-in role
-  const tierKey = getTierKey(staff?.tier);
-  const allowedTabs = ROLE_ACCESS[tierKey] || ['LIVE_OPS'];
-
   // Initialize RAG chat session
   useEffect(() => {
     chatSessionRef.current = createCopilotChat();
@@ -395,6 +318,33 @@ const CommandDashboard = ({ staff, onLogout }) => {
   useEffect(() => {
     if (terminalRef.current) terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
   }, [messages]);
+
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    setLoginError('');
+    setIsAuthenticating(true);
+
+    setTimeout(() => {
+      const match = VALID_CREDENTIALS.find(
+        (c) => c.username === username.toLowerCase() && c.password === password
+      );
+
+      if (match) {
+        onLogin({ name: match.name, tier: match.tier });
+      } else {
+        setLoginError('AUTHENTICATION_FAILED: Invalid Credentials');
+      }
+      setIsAuthenticating(false);
+    }, 1000);
+  };
+
+  const handleClearanceChange = (e) => {
+    const tier = e.target.value;
+    const match = VALID_CREDENTIALS.find(c => c.tier === tier);
+    if (match) {
+      onLogin({ name: match.name, tier: match.tier });
+    }
+  };
 
   const handleCommand = async (e) => {
     e.preventDefault();
@@ -432,6 +382,80 @@ const CommandDashboard = ({ staff, onLogout }) => {
     }, 600);
   };
 
+  // If NOT logged in, show inline terminal login panel
+  if (!staff) {
+    return (
+      <div className="max-w-md mx-auto py-12 animate-in fade-in duration-300">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 bg-cyber-volt/10 border border-cyber-volt/20 px-4 py-1.5 rounded mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyber-volt animate-pulse"></span>
+            <span className="font-label-caps text-[9px] text-cyber-volt tracking-widest">SECURE_GATEWAY</span>
+          </div>
+          <h2 className="text-2xl font-bold uppercase italic tracking-tighter text-cyber-volt">
+            COMMAND GATEWAY
+          </h2>
+          <p className="text-[10px] text-on-surface-variant/60 tracking-wider mt-1">AUTHORIZATION REQUIRED</p>
+        </div>
+
+        <div className="glass-panel p-6">
+          <form onSubmit={handleLoginSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-[9px] font-label-caps text-on-surface-variant tracking-wider block">Operator ID</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="admin, operator, or staff..."
+                className="w-full bg-black/60 border border-white/10 rounded p-2.5 text-xs text-primary font-mono focus:border-cyber-volt focus:outline-none transition-all placeholder:text-white/10"
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[9px] font-label-caps text-on-surface-variant tracking-wider block">Access Key</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="password..."
+                className="w-full bg-black/60 border border-white/10 rounded p-2.5 text-xs text-primary font-mono focus:border-cyber-volt focus:outline-none transition-all placeholder:text-white/10"
+                required
+              />
+            </div>
+
+            {loginError && (
+              <div className="bg-[#ffb4ab]/10 border border-[#ffb4ab]/30 text-[#ffb4ab] p-2 text-[10px] font-label-caps flex items-center gap-2 rounded">
+                <span className="material-symbols-outlined text-xs">error</span>
+                {loginError}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isAuthenticating}
+              className="w-full bg-cyber-volt text-black font-label-caps py-2.5 text-xs tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-2 rounded"
+            >
+              {isAuthenticating ? 'AUTHENTICATING...' : 'AUTHORIZE ACCESS'}
+            </button>
+          </form>
+
+          {/* Quick Demo Credentials */}
+          <div className="mt-6 pt-4 border-t border-white/5 space-y-2">
+            <div className="text-[9px] font-label-caps text-cyber-volt/60">Demo Credentials:</div>
+            <div className="grid grid-cols-3 gap-1 text-[8px] font-mono text-on-surface-variant">
+              <div>admin / admin123</div>
+              <div>operator / ops2026</div>
+              <div>staff / staff123</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const tierKey = getTierKey(staff.tier);
+  const allowedTabs = ROLE_ACCESS[tierKey] || ['LIVE_OPS'];
+
   const renderContent = () => {
     const isAllowed = allowedTabs.includes(activeTab);
     if (!isAllowed) return <RestrictedModule tab={activeTab} />;
@@ -451,59 +475,55 @@ const CommandDashboard = ({ staff, onLogout }) => {
   };
 
   return (
-    <div className="bg-black text-[#e5e2e1] min-h-[100dvh] font-body-md selection:bg-cyber-volt selection:text-black">
-      {/* CRT scanline */}
-      <div className="fixed inset-0 pointer-events-none opacity-5 z-[100]" style={{
-        background: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06))',
-        backgroundSize: '100% 4px, 3px 100%',
-      }}></div>
-
-      {/* Top Navigation */}
-      <header className="fixed top-0 w-full z-50 bg-black/70 backdrop-blur-xl border-b border-white/10 flex justify-between items-center h-16 px-4 md:px-8">
-        <div className="flex items-center gap-4">
-          <Link to="/" className="material-symbols-outlined text-cyber-volt cursor-pointer hover:bg-cyber-volt/10 p-2 rounded transition-colors">arrow_back</Link>
-          <h1 className="text-headline-md font-bold italic uppercase tracking-tighter text-cyber-volt volt-glow">STADIUMIQ CMD</h1>
+    <div className="space-y-6 animate-in fade-in duration-300">
+      {/* Workspace Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-4">
+        <div>
+          <h2 className="text-xl font-bold uppercase tracking-tight text-primary">OPS COMMAND DASHBOARD</h2>
+          <p className="text-[10px] text-on-surface-variant">Real-time incident response, telemetry, and dispatcher coordination.</p>
         </div>
 
-        <nav className="hidden md:flex items-center gap-1 h-full">
-          {['LIVE_OPS', 'INCIDENTS', 'DISPATCH', 'REPORTING'].map(tab => {
-            const isAllowed = allowedTabs.includes(tab);
-            return (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                title={!isAllowed ? 'Insufficient access level' : ''}
-                className={`font-label-caps text-label-caps h-full flex items-center gap-1.5 px-3 transition-colors relative
-                  ${activeTab === tab ? 'text-cyber-volt border-b-2 border-cyber-volt' : isAllowed ? 'text-on-surface-variant hover:text-cyber-volt' : 'text-white/20 cursor-not-allowed'}`}
-              >
-                <span className="material-symbols-outlined text-[14px]">{TAB_ICONS[tab]}</span>
-                {tab}
-                {!isAllowed && <span className="material-symbols-outlined text-[10px] ml-0.5">lock</span>}
-              </button>
-            );
-          })}
-        </nav>
-
-        <div className="flex items-center gap-4">
-          {/* Role badge */}
-          <div className="hidden sm:flex flex-col items-end">
-            <span className="text-[10px] font-label-caps text-on-surface-variant">{staff?.name || 'OPERATOR'}</span>
-            <span className="text-[8px] font-label-caps text-cyber-volt">{staff?.tier || 'ACCESS'}</span>
-          </div>
-          <button
-            onClick={() => { onLogout(); navigate('/'); }}
-            className="material-symbols-outlined text-[#ffb4ab] hover:bg-[#ffb4ab]/10 p-2 rounded transition-colors text-sm"
-            title="Logout"
-          >logout</button>
-          <div className="w-10 h-10 rounded-full border border-cyber-volt/30 bg-[#2a2a2a] overflow-hidden flex items-center justify-center">
-            <span className="material-symbols-outlined text-cyber-volt text-sm">person</span>
-          </div>
+        {/* Inline Clearance Swapper */}
+        <div className="flex items-center gap-3">
+          <span className="text-[9px] font-label-caps text-on-surface-variant">System Clearance:</span>
+          <select
+            value={staff.tier}
+            onChange={handleClearanceChange}
+            className="bg-black/60 border border-white/10 rounded px-3 py-1.5 text-[10px] font-mono text-cyber-volt outline-none focus:border-cyber-volt"
+          >
+            <option value="TIER 5 — FULL ACCESS">Tier 5 — Root Admin</option>
+            <option value="TIER 4 ACCESS">Tier 4 — Operator</option>
+            <option value="TIER 2 ACCESS">Tier 2 — Field Staff</option>
+          </select>
         </div>
-      </header>
+      </div>
 
-      <main className="pt-20 pb-32 px-4 md:px-8 max-w-[1600px] mx-auto">
+      {/* Tabs Row */}
+      <div className="flex border-b border-white/5 overflow-x-auto gap-2">
+        {['LIVE_OPS', 'INCIDENTS', 'DISPATCH', 'REPORTING'].map(tab => {
+          const isAllowed = allowedTabs.includes(tab);
+          return (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`font-label-caps text-[10px] flex items-center gap-1.5 px-4 py-2 border-b-2 transition-all relative ${
+                activeTab === tab
+                  ? 'text-cyber-volt border-cyber-volt bg-white/5'
+                  : 'text-on-surface-variant border-transparent hover:text-white'
+              }`}
+            >
+              <span className="material-symbols-outlined text-sm">{TAB_ICONS[tab]}</span>
+              {tab.replace('_', ' ')}
+              {!isAllowed && <span className="material-symbols-outlined text-[10px] text-[#ffb4ab]">lock</span>}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Dynamic Tab Workspace */}
+      <div className="min-h-[400px]">
         {renderContent()}
-      </main>
+      </div>
     </div>
   );
 };

@@ -49,7 +49,7 @@ const LandingPage = () => {
         </div>
         <div style={{ display: 'flex', gap: 32 }}>
           <Link to="/companion" className="nav-link">Fan Hub</Link>
-          <Link to="/login" className="nav-link">Staff</Link>
+          <Link to="/command" className="nav-link">Staff</Link>
           <Link to="/optimus" className="nav-link">Optimus</Link>
         </div>
         <Link to="/companion" className="cta-primary">Enter App</Link>
@@ -88,7 +88,7 @@ const LandingPage = () => {
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <Link to="/companion" className="cta-primary">Fan Hub →</Link>
-          <Link to="/login" className="cta-secondary">Staff Login</Link>
+          <Link to="/command" className="cta-secondary">Staff Login</Link>
         </div>
 
         {/* STATS */}
@@ -127,7 +127,7 @@ const LandingPage = () => {
               label: 'Command Center',
               desc: 'Incidents, dispatch & reporting for staff.',
               tag: 'Staff',
-              to: '/login',
+              to: '/command',
             },
             {
               label: 'Global Map',
@@ -168,7 +168,7 @@ const LandingPage = () => {
         <span style={{ fontSize: 12, color: '#444' }}>StadiumIQ · Vamos AI Platform</span>
         <div style={{ display: 'flex', gap: 24 }}>
           <Link to="/companion" style={{ fontSize: 12, color: '#444' }}>Fan Hub</Link>
-          <Link to="/login" style={{ fontSize: 12, color: '#444' }}>Ops Center</Link>
+          <Link to="/command" style={{ fontSize: 12, color: '#444' }}>Ops Center</Link>
           <Link to="/optimus" style={{ fontSize: 12, color: '#444' }}>Optimus</Link>
         </div>
       </footer>

@@ -275,57 +275,37 @@ const CompanionHome = () => {
   };
 
   return (
-    <>
-      <header className="bg-black/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center w-full px-4 md:px-8 py-4 sticky top-0 z-50">
-        <div className="flex items-center gap-4">
-          <button className="material-symbols-outlined text-cyber-volt p-2 hover:bg-white/5 rounded transition-colors">menu</button>
-          <h1 className="text-headline-md font-bold tracking-tighter text-cyber-volt italic uppercase">STADIUMIQ</h1>
+    <div className="space-y-6">
+      {/* Workspace Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-4">
+        <div>
+          <h2 className="text-xl font-bold uppercase tracking-tight text-primary">STADIUM FAN COMPANION</h2>
+          <p className="text-[10px] text-on-surface-variant">Real-time gate status, stadium navigation, food wait times, and alerts.</p>
         </div>
-        <div className="hidden md:flex gap-8 items-center">
-          {['HUB', 'ALERTS', 'MAP', 'CROWD'].map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`text-label-caps transition-colors ${activeTab === tab ? 'text-cyber-volt border-b-2 border-cyber-volt pb-1' : 'text-on-surface-variant hover:text-cyber-volt'}`}
-            >
-              {tab}
-            </button>
-          ))}
-          <Link to="/login" className="text-label-caps text-on-surface-variant hover:text-cyber-volt transition-colors flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm">admin_panel_settings</span>STAFF
-          </Link>
-        </div>
-        <div className="w-10 h-10 rounded-full border border-cyber-volt/40 overflow-hidden bg-white/10 flex justify-center items-center">
-          <span className="material-symbols-outlined text-cyber-volt text-sm">person</span>
-        </div>
-      </header>
+      </div>
 
-      <main className="max-w-7xl mx-auto px-4 md:px-8 mt-8 space-y-6 pb-24">
-        {renderContent()}
-      </main>
-
-      <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-black/90 backdrop-blur-xl border-t border-white/10 md:hidden">
-        {[
-          { name: 'HUB', icon: 'home_max' },
-          { name: 'MAP', icon: 'explore' },
-          { name: 'CROWD', icon: 'groups' },
-          { name: 'ALERTS', icon: 'warning' }
-        ].map(tab => (
+      {/* Tabs Row */}
+      <div className="flex border-b border-white/5 overflow-x-auto gap-2">
+        {['HUB', 'ALERTS', 'MAP', 'CROWD'].map(tab => (
           <button
-            key={tab.name}
-            onClick={() => setActiveTab(tab.name)}
-            className={`flex flex-col items-center justify-center px-4 py-1.5 transition-colors rounded-lg ${activeTab === tab.name ? 'text-cyber-volt bg-cyber-volt/10 border border-cyber-volt/20 shadow-[0_0_15px_rgba(223,255,0,0.1)]' : 'text-on-surface-variant/60 hover:text-cyber-volt'}`}
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`font-label-caps text-[10px] px-4 py-2 border-b-2 transition-all relative ${
+              activeTab === tab
+                ? 'text-cyber-volt border-cyber-volt bg-white/5'
+                : 'text-on-surface-variant border-transparent hover:text-white'
+            }`}
           >
-            <span className="material-symbols-outlined">{tab.icon}</span>
-            <span className="text-label-caps mt-1">{tab.name}</span>
+            {tab}
           </button>
         ))}
-        <Link to="/login" className="flex flex-col items-center justify-center text-on-surface-variant/60 px-4 py-1.5 hover:text-cyber-volt">
-          <span className="material-symbols-outlined">admin_panel_settings</span>
-          <span className="text-label-caps mt-1">STAFF</span>
-        </Link>
-      </nav>
-    </>
+      </div>
+
+      {/* Dynamic Tab Workspace */}
+      <div className="min-h-[400px]">
+        {renderContent()}
+      </div>
+    </div>
   );
 };
 
