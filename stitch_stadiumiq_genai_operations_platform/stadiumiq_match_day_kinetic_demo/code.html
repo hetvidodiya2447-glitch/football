@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>STADIUMIQ // KINETIC DATA SYSTEMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,700;1,800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            --pitch-green: #15FF00;
+            --zinc-finish: #2A2E33;
+            --stadium-shadow: #080A0C;
+        }
+        body {
+            background-color: #111416;
+            color: #e2e2e5;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .hard-shadow {
+            box-shadow: 4px 4px 0px 0px #2A2E33;
+        }
+        .hard-shadow-primary {
+            box-shadow: 4px 4px 0px 0px #15FF00;
+        }
+        .grid-line-h {
+            height: 2px;
+            background: #2A2E33;
+            width: 100%;
+        }
+        .grid-line-v {
+            width: 2px;
+            background: #2A2E33;
+            height: 100%;
+        }
+        @keyframes pulse-alert {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .animate-pulse-alert {
+            animation: pulse-alert 1s infinite;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#111416",
+                        "inverse-primary": "#066e00",
+                        "on-secondary-fixed-variant": "#5e4200",
+                        "surface-variant": "#333537",
+                        "on-secondary": "#412d00",
+                        "tertiary-container": "#d9dce3",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-container": "#6b4b00",
+                        "primary-fixed-dim": "#13e600",
+                        "tertiary-fixed": "#e0e2e9",
+                        "surface-container-low": "#1a1c1e",
+                        "on-primary-fixed": "#012200",
+                        "on-surface-variant": "#baccaf",
+                        "surface-container-lowest": "#0c0e10",
+                        "surface-tint": "#13e600",
+                        "primary-container": "#15ff00",
+                        "secondary-fixed-dim": "#ffba20",
+                        "surface-bright": "#37393c",
+                        "outline": "#84967c",
+                        "tertiary-fixed-dim": "#c3c7cd",
+                        "on-primary": "#023a00",
+                        "secondary-container": "#feb700",
+                        "error-container": "#93000a",
+                        "on-primary-container": "#067100",
+                        "surface-container": "#1e2022",
+                        "outline-variant": "#3b4b35",
+                        "surface-dim": "#111416",
+                        "primary": "#ebffdf",
+                        "secondary": "#ffdb9d",
+                        "on-primary-fixed-variant": "#035300",
+                        "inverse-surface": "#e2e2e5",
+                        "on-background": "#e2e2e5",
+                        "on-secondary-fixed": "#271900",
+                        "error": "#ffb4ab",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#333537",
+                        "on-surface": "#e2e2e5",
+                        "on-tertiary": "#2d3136",
+                        "on-tertiary-fixed-variant": "#43474c",
+                        "surface": "#111416",
+                        "tertiary": "#f6f8ff",
+                        "on-tertiary-fixed": "#181c21",
+                        "inverse-on-surface": "#2f3133",
+                        "secondary-fixed": "#ffdea8",
+                        "surface-container-high": "#282a2c",
+                        "on-tertiary-container": "#5d6166",
+                        "primary-fixed": "#77ff5f"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "margin-lg": "48px",
+                        "edge-stroke": "2px",
+                        "unit": "4px",
+                        "margin-md": "32px",
+                        "margin-sm": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Barlow Condensed"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Barlow Condensed"],
+                        "utility-label": ["JetBrains Mono"],
+                        "utility-data": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface-dim/70 backdrop-blur-md border-b border-outline-variant shadow-[0_0_15px_rgba(210,240,0,0.2)]">
+<div class="flex justify-between items-center px-4 md:px-12 py-4 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-4">
+<span class="font-display-lg text-2xl md:text-3xl text-primary-fixed tracking-tighter italic border-l-4 border-primary-fixed pl-2">STADIUMIQ</span>
+</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-on-surface-variant font-label-caps text-xs tracking-widest hover:text-primary-fixed transition-colors" href="#">LIVE OPS</a>
+<a class="text-on-surface-variant font-label-caps text-xs tracking-widest hover:text-primary-fixed transition-colors" href="#">METRICS</a>
+<a class="text-on-surface-variant font-label-caps text-xs tracking-widest hover:text-primary-fixed transition-colors" href="#">STRATEGY</a>
+<a class="text-on-surface-variant font-label-caps text-xs tracking-widest hover:text-primary-fixed transition-colors" href="#">ROSTER</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer">sensors</span>
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer">terminal</span>
+<button class="bg-primary-container text-on-primary-container px-4 py-2 font-headline-md italic uppercase text-sm border-2 border-primary active:scale-95 transition-transform">LAUNCH HUD</button>
+</div>
+</div>
+</nav>
+<main class="pt-24">
+<!-- Hero Section -->
+<section class="px-4 md:px-12 max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 py-16 items-start">
+<div class="lg:col-span-6 space-y-8">
+<div class="inline-flex items-center gap-2 border-l-4 border-primary-fixed pl-4 bg-surface-container-low py-2 pr-8">
+<span class="font-utility-label text-primary-fixed uppercase tracking-widest">System Status: Operational</span>
+</div>
+<h1 class="font-display-lg text-6xl md:text-8xl italic uppercase leading-none tracking-tighter">
+                    IF THE CROWD CROSSES <span class="text-primary-fixed">90% CAPACITY</span>, THE MAP REDRAWS.
+                </h1>
+<p class="font-body-lg text-on-surface-variant max-w-xl">
+                    StadiumIQ isn't a dashboard. It's an autonomous nervous system for high-density environments. When bottlenecks form, the infrastructure adapts in real-time.
+                </p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary-container text-on-primary-container px-8 py-4 font-headline-md text-xl italic uppercase border-2 border-primary hard-shadow-primary active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">CONNECT CORE</button>
+<button class="bg-surface-container-highest text-on-surface px-8 py-4 font-headline-md text-xl italic uppercase border-2 border-outline active:translate-x-1 active:translate-y-1 active:shadow-none transition-all hard-shadow">PROTOCOL DOCS</button>
+</div>
+</div>
+<!-- Kinetic Card Logic -->
+<div class="lg:col-span-6 space-y-4">
+<div class="border-2 border-outline-variant bg-surface-container p-6 relative overflow-hidden">
+<div class="absolute top-0 right-0 bg-error-container text-on-error-container px-3 py-1 font-utility-label text-[10px] animate-pulse-alert">
+                        CRITICAL ALERT: SECTOR 4
+                    </div>
+<div class="flex justify-between items-end mb-6">
+<div>
+<div class="font-utility-label text-on-surface-variant text-xs uppercase mb-1">Current Load: Gate 4</div>
+<div class="font-display-lg text-5xl italic text-primary-fixed">94.2%</div>
+</div>
+<div class="text-right">
+<div class="font-utility-label text-on-surface-variant text-xs uppercase mb-1">Queue Velocity</div>
+<div class="font-utility-data text-xl text-error">FAST DECAY</div>
+</div>
+</div>
+<div class="space-y-4">
+<!-- Chat Interface -->
+<div class="bg-surface-dim border-l-2 border-primary-fixed p-3 flex gap-4">
+<div class="shrink-0 w-8 h-8 bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">person</span>
+</div>
+<div class="space-y-1">
+<div class="font-utility-label text-[10px] text-on-surface-variant">FAN_ID_8829 // LOCATION: GATE 4</div>
+<div class="font-body-md text-sm text-on-surface" dir="rtl">أين هو أسرع طريق للخروج من هنا؟ الزحام شديد جداً.</div>
+</div>
+</div>
+<div class="bg-primary-container/10 border-l-2 border-primary-fixed p-3 flex gap-4">
+<div class="shrink-0 w-8 h-8 bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-sm" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<div class="space-y-1">
+<div class="font-utility-label text-[10px] text-primary-fixed">IQ_ENGINE // REROUTE PROPOSAL</div>
+<div class="font-body-md text-sm text-on-surface">Sector 4 overflow detected. Redrawing egress pathing. Redirecting 40% of traffic to Gate 7 (Current load: 12%). Updating all digital signage now.</div>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant grid grid-cols-2 gap-4">
+<button class="w-full py-2 bg-outline-variant text-on-surface font-headline-md italic uppercase text-xs">REJECT PROPOSAL</button>
+<button class="w-full py-2 bg-primary-container text-on-primary font-headline-md italic uppercase text-xs">EXECUTE MAP UPDATE</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Connected System Grid -->
+<section class="bg-surface-container-lowest py-24 border-y-2 border-outline-variant relative">
+<div class="px-4 md:px-12 max-w-[1440px] mx-auto">
+<div class="mb-16">
+<h2 class="font-display-lg text-5xl md:text-7xl italic uppercase mb-4">THE CONNECTED SYSTEM</h2>
+<div class="w-24 h-2 bg-primary-fixed"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[2px] bg-outline-variant p-[2px]">
+<!-- Fans -->
+<div class="bg-surface-dim p-8 space-y-6 group hover:bg-surface-container transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-4xl text-primary-fixed">groups</span>
+<span class="font-utility-data text-on-surface-variant">NODE_01</span>
+</div>
+<h3 class="font-headline-md text-3xl italic uppercase">FANS</h3>
+<p class="font-body-md text-on-surface-variant text-sm">Real-time localized pathing, multi-lingual concierge, and dynamic ticketing via IQ-Link.</p>
+<div class="pt-4 border-t border-outline-variant flex gap-2">
+<div class="h-1 w-full bg-primary-fixed"></div>
+<div class="h-1 w-1/2 bg-outline-variant"></div>
+</div>
+</div>
+<!-- Volunteers -->
+<div class="bg-surface-dim p-8 space-y-6 group hover:bg-surface-container transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-4xl text-primary-fixed">volunteer_activism</span>
+<span class="font-utility-data text-on-surface-variant">NODE_02</span>
+</div>
+<h3 class="font-headline-md text-3xl italic uppercase">VOLUNTEERS</h3>
+<p class="font-body-md text-on-surface-variant text-sm">Frictionless task assignment and geo-fenced deployment based on live demand heatmaps.</p>
+<div class="pt-4 border-t border-outline-variant flex gap-2">
+<div class="h-1 w-full bg-primary-fixed"></div>
+<div class="h-1 w-3/4 bg-primary-fixed"></div>
+</div>
+</div>
+<!-- Staff -->
+<div class="bg-surface-dim p-8 space-y-6 group hover:bg-surface-container transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-4xl text-primary-fixed">engineering</span>
+<span class="font-utility-data text-on-surface-variant">NODE_03</span>
+</div>
+<h3 class="font-headline-md text-3xl italic uppercase">STAFF</h3>
+<p class="font-body-md text-on-surface-variant text-sm">Operational HUD for maintenance, security, and vendors with direct hardware integration.</p>
+<div class="pt-4 border-t border-outline-variant flex gap-2">
+<div class="h-1 w-full bg-primary-fixed"></div>
+<div class="h-1 w-full bg-primary-fixed"></div>
+</div>
+</div>
+<!-- Organizers -->
+<div class="bg-surface-dim p-8 space-y-6 group hover:bg-surface-container transition-colors">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-4xl text-primary-fixed">monitoring</span>
+<span class="font-utility-data text-on-surface-variant">NODE_04</span>
+</div>
+<h3 class="font-headline-md text-3xl italic uppercase">ORGANIZERS</h3>
+<p class="font-body-md text-on-surface-variant text-sm">The Strategic Command Terminal. Macro-level forecasting and override authority.</p>
+<div class="pt-4 border-t border-outline-variant flex gap-2">
+<div class="h-1 w-full bg-primary-fixed"></div>
+<div class="h-1 w-1/4 bg-outline-variant"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How it Thinks -->
+<section class="py-24 px-4 md:px-12 max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div class="order-2 lg:order-1">
+<div class="bg-stadium-shadow border-2 border-zinc-finish p-8 relative">
+<div class="flex justify-between items-center mb-8 pb-4 border-b border-zinc-finish">
+<div class="font-utility-label text-primary-fixed">TERMINAL // HUMAN-IN-THE-LOOP</div>
+<div class="flex gap-2">
+<div class="w-3 h-3 bg-error rounded-full"></div>
+<div class="w-3 h-3 bg-secondary rounded-full"></div>
+<div class="w-3 h-3 bg-primary-fixed rounded-full"></div>
+</div>
+</div>
+<div class="space-y-6 font-utility-data text-on-surface-variant">
+<div class="flex gap-4">
+<span class="text-primary-fixed">[14:02:12]</span>
+<span>ANALYZING PATTERN: Sector B Entrance</span>
+</div>
+<div class="flex gap-4">
+<span class="text-primary-fixed">[14:02:13]</span>
+<span class="text-on-surface">PREDICTION: Capacity breach in 120s.</span>
+</div>
+<div class="bg-zinc-finish/30 p-4 border-l-4 border-primary-fixed">
+<div class="text-xs uppercase mb-2 opacity-50">AI PROPOSED DRAFT</div>
+<div class="text-sm text-on-surface mb-4">"Attention Sector B visitors: Access point B2 is currently under maintenance. Please use the North Tunnel for immediate entry. No wait time recorded."</div>
+<div class="flex items-center gap-2 text-primary-fixed animate-pulse">
+<span class="material-symbols-outlined text-sm">keyboard_arrow_right</span>
+<span>WAITING FOR PHYSICAL AUTHORIZATION...</span>
+</div>
+</div>
+</div>
+<div class="mt-12 flex justify-center">
+<button class="relative group">
+<div class="absolute -inset-2 bg-primary-fixed/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="relative w-24 h-24 bg-surface-container border-4 border-zinc-finish flex items-center justify-center active:scale-90 active:border-primary-fixed transition-all">
+<div class="w-16 h-16 bg-error rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,180,171,0.4)]">
+<span class="material-symbols-outlined text-stadium-shadow font-bold">touch_app</span>
+</div>
+</div>
+<div class="mt-4 font-headline-md italic text-sm text-center">PUSH TO BROADCAST</div>
+</button>
+</div>
+</div>
+</div>
+<div class="order-1 lg:order-2 space-y-8">
+<h2 class="font-display-lg text-5xl md:text-7xl italic uppercase leading-none">AI PROPOSES // <br/><span class="text-primary-fixed">HUMAN APPROVES.</span></h2>
+<p class="font-body-lg text-on-surface-variant">
+                    We don't believe in total automation for crowd safety. StadiumIQ handles the data heavy-lifting—identifying patterns and drafting interventions—but leaves the final execution to the people on the ground.
+                </p>
+<div class="grid grid-cols-2 gap-8 pt-8">
+<div class="border-l-2 border-outline-variant pl-4">
+<div class="font-utility-data text-primary-fixed text-2xl">0.4s</div>
+<div class="font-utility-label text-xs uppercase text-on-surface-variant">Inference Speed</div>
+</div>
+<div class="border-l-2 border-outline-variant pl-4">
+<div class="font-utility-data text-primary-fixed text-2xl">100%</div>
+<div class="font-utility-label text-xs uppercase text-on-surface-variant">Human Oversight</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Architecture Evidence -->
+<section class="bg-background py-24">
+<div class="px-4 md:px-12 max-w-[1440px] mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+<div class="lg:col-span-1 space-y-6">
+<h2 class="font-display-lg text-5xl italic uppercase">ARCHITECTURE <br/>AT A GLANCE</h2>
+<p class="font-body-md text-on-surface-variant">Built for zero-failure performance using a distributed edge architecture. No single point of failure in a 100k capacity environment.</p>
+<div class="space-y-4">
+<div class="flex items-center gap-4 border-2 border-zinc-finish p-4">
+<span class="material-symbols-outlined text-primary-fixed">terminal</span>
+<div class="font-utility-label text-xs uppercase tracking-widest">Rust-Core Backend</div>
+</div>
+<div class="flex items-center gap-4 border-2 border-zinc-finish p-4">
+<span class="material-symbols-outlined text-primary-fixed">database</span>
+<div class="font-utility-label text-xs uppercase tracking-widest">Vector Data Streams</div>
+</div>
+<div class="flex items-center gap-4 border-2 border-zinc-finish p-4">
+<span class="material-symbols-outlined text-primary-fixed">router</span>
+<div class="font-utility-label text-xs uppercase tracking-widest">5G Slicing Ready</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2">
+<div class="relative h-[400px] border-2 border-zinc-finish bg-surface-container-lowest overflow-hidden">
+<div class="absolute inset-0 opacity-20">
+<div class="absolute inset-0" style="background-image: radial-gradient(circle, #15FF00 1px, transparent 1px); background-size: 20px 20px;"></div>
+</div>
+<!-- Mock Visualization -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="relative w-64 h-64 border-2 border-primary-fixed/50 animate-pulse">
+<div class="absolute -top-4 -left-4 w-8 h-8 border-t-4 border-l-4 border-primary-fixed"></div>
+<div class="absolute -bottom-4 -right-4 w-8 h-8 border-b-4 border-r-4 border-primary-fixed"></div>
+<div class="w-full h-full flex flex-col items-center justify-center">
+<div class="font-utility-data text-4xl text-primary-fixed">99.4%</div>
+<div class="font-utility-label text-[10px] uppercase">Accuracy Rating</div>
+</div>
+</div>
+</div>
+<!-- Data Floating Labels -->
+<div class="absolute top-10 left-10 p-2 border border-zinc-finish bg-surface-dim font-utility-data text-[10px]">
+                                LATENCY: 0.12ms <br/> PACKET_LOSS: 0.00%
+                            </div>
+<div class="absolute bottom-10 right-10 p-2 border border-zinc-finish bg-surface-dim font-utility-data text-[10px] text-right">
+                                SYSTEM_LOAD: 14.2% <br/> THREAD_COUNT: 1024
+                            </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-24 px-4 md:px-12 max-w-[1440px] mx-auto text-center border-t-4 border-primary-fixed bg-surface-container-low">
+<h2 class="font-display-lg text-6xl md:text-9xl italic uppercase mb-12 tracking-tighter">READY FOR <br/><span class="text-primary-fixed">KINETIC DEPLOYMENT?</span></h2>
+<div class="flex flex-col md:flex-row justify-center gap-6">
+<a class="bg-primary-container text-on-primary-container px-12 py-6 font-headline-md text-3xl italic uppercase border-2 border-primary hard-shadow-primary active:scale-95 transition-all" href="#">LAUNCH DEMO HUB</a>
+<a class="bg-transparent text-on-surface px-12 py-6 font-headline-md text-3xl italic uppercase border-2 border-on-surface hard-shadow active:scale-95 transition-all" href="#">VIEW THE REPO</a>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest w-full relative bottom-0 border-t-2 border-outline">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter px-4 md:px-12 py-12 max-w-[1440px] mx-auto">
+<div class="space-y-4">
+<div class="font-headline-md text-3xl text-on-surface tracking-tighter">STADIUMIQ</div>
+<div class="font-data-mono text-xs text-secondary-fixed-dim uppercase tracking-widest">©2024 STADIUMIQ // KINETIC DATA SYSTEMS</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary-fixed cursor-pointer transition-colors">hub</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary-fixed cursor-pointer transition-colors">lan</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary-fixed cursor-pointer transition-colors">security</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="space-y-2 flex flex-col">
+<a class="text-on-surface-variant font-data-mono text-xs hover:text-tertiary-fixed-dim hover:tracking-widest transition-all duration-300" href="#">VULNERABILITY REPORT</a>
+<a class="text-on-surface-variant font-data-mono text-xs hover:text-tertiary-fixed-dim hover:tracking-widest transition-all duration-300" href="#">API DOCS</a>
+</div>
+<div class="space-y-2 flex flex-col">
+<a class="text-on-surface-variant font-data-mono text-xs hover:text-tertiary-fixed-dim hover:tracking-widest transition-all duration-300" href="#">STADIUM NODE MAP</a>
+<a class="text-on-surface-variant font-data-mono text-xs hover:text-tertiary-fixed-dim hover:tracking-widest transition-all duration-300" href="#">HACKATHON_24</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions for terminal
+        document.addEventListener('DOMContentLoaded', () => {
+            const terminalLines = document.querySelectorAll('.font-utility-data span');
+            let index = 0;
+            
+            setInterval(() => {
+                const line = terminalLines[Math.floor(Math.random() * terminalLines.length)];
+                if (line) {
+                    line.style.opacity = '0.5';
+                    setTimeout(() => line.style.opacity = '1', 50);
+                }
+            }, 100);
+        });
+    </script>
+</body></html>

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>STADIUM_IQ | Volunteer Alert Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Anybody', sans-serif;
+            background-color: #000000;
+            color: #e5e2e1;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .scanline-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 0, 0, 0.02) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .segment-bar {
+            display: flex;
+            gap: 2px;
+        }
+
+        .segment {
+            height: 8px;
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .segment.active-volt {
+            background: #d2f000;
+            box-shadow: 0 0 8px rgba(210, 240, 0, 0.5);
+        }
+
+        .segment.active-error {
+            background: #ffb4ab;
+            box-shadow: 0 0 8px rgba(255, 180, 171, 0.5);
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 180, 171, 0.2), inset 0 0 10px rgba(255, 180, 171, 0.1); }
+            50% { box-shadow: 0 0 25px rgba(255, 180, 171, 0.5), inset 0 0 20px rgba(255, 180, 171, 0.2); }
+        }
+
+        .alert-urgent {
+            border: 1px solid #ffb4ab !important;
+            animation: pulse-red 2s infinite ease-in-out;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#191e00",
+                        "tertiary-container": "#7df4ff",
+                        "surface": "#131313",
+                        "on-tertiary": "#00363a",
+                        "primary-fixed": "#d2f000",
+                        "surface-tint": "#b8d300",
+                        "secondary-container": "#7701d0",
+                        "secondary-fixed-dim": "#dcb8ff",
+                        "on-tertiary-fixed-variant": "#004f54",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed-variant": "#414c00",
+                        "surface-container-highest": "#353534",
+                        "tertiary-fixed-dim": "#00dbe9",
+                        "outline": "#909378",
+                        "on-secondary-container": "#dcb7ff",
+                        "surface-variant": "#353534",
+                        "on-tertiary-fixed": "#002022",
+                        "secondary": "#dcb8ff",
+                        "on-surface": "#e5e2e1",
+                        "on-tertiary-container": "#006f77",
+                        "background": "#131313",
+                        "primary-fixed-dim": "#b8d300",
+                        "on-primary-container": "#5d6b00",
+                        "tertiary-fixed": "#7df4ff",
+                        "on-secondary-fixed": "#2c0051",
+                        "inverse-primary": "#576500",
+                        "inverse-on-surface": "#313030",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#6700b5",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-primary": "#2c3400",
+                        "outline-variant": "#454932",
+                        "secondary-fixed": "#efdbff",
+                        "tertiary": "#ffffff",
+                        "on-secondary": "#480081",
+                        "primary": "#ffffff",
+                        "surface-container": "#201f1f",
+                        "surface-bright": "#393939",
+                        "on-error": "#690005",
+                        "on-surface-variant": "#c6c9ab",
+                        "primary-container": "#d2f000",
+                        "surface-dim": "#131313",
+                        "surface-container-low": "#1c1b1b",
+                        "on-background": "#e5e2e1",
+                        "surface-container-high": "#2a2a2a",
+                        "on-error-container": "#ffdad6",
+                        "inverse-surface": "#e5e2e1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "16px",
+                        "unit": "4px",
+                        "margin-desktop": "32px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Anybody"],
+                        "body-md": ["Anybody"],
+                        "data-mono": ["Anybody"],
+                        "display-lg": ["Anybody"],
+                        "headline-lg-mobile": ["Anybody"],
+                        "headline-lg": ["Anybody"],
+                        "body-lg": ["Anybody"],
+                        "label-caps": ["Anybody"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "0em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                        "data-mono": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "display-lg": ["72px", {"lineHeight": "72px", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.15em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface">
+<div class="scanline-overlay"></div>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/70 dark:bg-surface/70 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_0_15px_rgba(210,240,0,0.15)]">
+<div class="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer hover:bg-primary-fixed/10 p-2 transition-colors active:scale-95 duration-150">menu</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg tracking-tighter text-primary-fixed italic uppercase">STADIUM_IQ</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex flex-col items-end mr-4">
+<span class="font-label-caps text-label-caps text-primary-fixed">OPERATOR_01</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant uppercase tracking-widest">System Active</span>
+</div>
+<div class="w-10 h-10 rounded-full border border-primary-fixed/40 overflow-hidden shadow-[0_0_10px_rgba(210,240,0,0.2)]">
+<img class="w-full h-full object-cover" data-alt="A professional security operator portrait in a dark, high-tech control room environment. Soft neon green rim lighting illuminates the profile, reflecting off high-tech screens in the background. The aesthetic is cyber-athletic, clean, and focused, utilizing a palette of deep blacks and sharp volt accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIDocT8C1fv-IO9ZIRuzcsr2dWmeFLzE4ndaBRZWW68IGAI83UtLMVY87AW0_P31L7meQB92pCGX4_ZtWsZYqmwcJEunM-0cjI6L0lIp8lbICouBLmkzYJiZDVEviopXeJkFOhO8Iqdiow111lU6-rAc0gsED-WTz6cEfrZd77VTxY1FoC3jS5iCbNQgcyVGofJh8L9o7FDj9UZljuLc3JUUR18_kNlSghi5NYimefW2uMKAj9E0dnag"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="pt-20 pb-28 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto min-h-screen">
+<!-- System Health Bar -->
+<section class="mb-8 glass-panel p-4 rounded-lg">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- System Health -->
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-caps text-label-caps text-primary-fixed">SYSTEM_HEALTH</span>
+<span class="font-data-mono text-data-mono text-primary-fixed">98.4%</span>
+</div>
+<div class="segment-bar">
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment"></div>
+</div>
+</div>
+<!-- Staff Density -->
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">STAFF_DENSITY</span>
+<span class="font-data-mono text-data-mono text-on-surface-variant">OPTIMAL</span>
+</div>
+<div class="segment-bar">
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment"></div>
+<div class="segment"></div>
+<div class="segment"></div>
+<div class="segment"></div>
+<div class="segment"></div>
+<div class="segment"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Alert Feed Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Urgent Feed -->
+<div class="lg:col-span-2 space-y-6">
+<div class="flex items-center gap-2 mb-4">
+<span class="w-2 h-2 bg-error rounded-full animate-ping"></span>
+<h2 class="font-headline-md text-headline-md tracking-tight uppercase">Active Alerts</h2>
+</div>
+<!-- Urgent Alert Card -->
+<div class="alert-urgent glass-panel p-6 rounded-xl relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-data-mono text-[10px] text-error border border-error/30 px-2 py-0.5 rounded">CRITICAL</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant uppercase">ID: 4492-X</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-error mb-2">Crowd Spike - Gate 4 North</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">Sensor nodes detecting 120% capacity threshold. Flow rate bottlenecked at turnstile array G4-A.</p>
+</div>
+<div class="flex flex-col gap-2 w-full md:w-auto">
+<button class="bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps py-3 px-8 rounded-lg shadow-[0_0_15px_rgba(210,240,0,0.4)] hover:brightness-110 active:scale-95 transition-all uppercase">Respond Now</button>
+<button class="border border-outline-variant/50 font-label-caps text-label-caps py-2 px-8 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all uppercase">Acknowledge</button>
+</div>
+</div>
+<!-- AI Recommendation Segment -->
+<div class="mt-6 p-4 bg-tertiary-fixed/5 border border-tertiary-fixed/20 rounded-lg flex items-start gap-4">
+<span class="material-symbols-outlined text-tertiary-fixed mt-1">psychology</span>
+<div>
+<span class="font-label-caps text-[10px] text-tertiary-fixed block mb-1">AI_STRATEGY_REC</span>
+<p class="font-body-md text-body-md text-tertiary-fixed">Divert 5 stewards from Concourse C to Gate 4 bypass lanes. Initiate surge protocol Sigma-7.</p>
+</div>
+</div>
+</div>
+<!-- Moderate Alert Card -->
+<div class="glass-panel p-6 rounded-xl relative overflow-hidden hover:border-primary-fixed/40 transition-all group">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary-fixed/30 group-hover:bg-primary-fixed transition-all"></div>
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-data-mono text-[10px] text-primary-fixed border border-primary-fixed/30 px-2 py-0.5 rounded">MODERATE</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant uppercase">ID: 2210-B</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Restock First Aid Hub</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">Station 12 (East Mezzanine) reporting low inventory on antiseptic and trauma pads.</p>
+</div>
+<div class="w-full md:w-auto">
+<button class="w-full border border-primary-fixed text-primary-fixed font-label-caps text-label-caps py-3 px-8 rounded-lg hover:bg-primary-fixed/10 active:scale-95 transition-all uppercase">Dispatch Logistics</button>
+</div>
+</div>
+</div>
+<!-- Notification Cards (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="glass-panel p-4 rounded-lg border-outline-variant/20">
+<span class="material-symbols-outlined text-on-surface-variant mb-2">schedule</span>
+<h4 class="font-label-caps text-label-caps mb-1">Shift Rotation</h4>
+<p class="font-data-mono text-[12px] text-on-surface-variant">Zone D transition in 12 minutes. Ensure radio handoff is complete.</p>
+</div>
+<div class="glass-panel p-4 rounded-lg border-outline-variant/20">
+<span class="material-symbols-outlined text-on-surface-variant mb-2">weather_mix</span>
+<h4 class="font-label-caps text-label-caps mb-1">Weather Update</h4>
+<p class="font-data-mono text-[12px] text-on-surface-variant">Wind speed increasing. Secure all loose banners in Upper Tier North.</p>
+</div>
+</div>
+</div>
+<!-- Side Intelligence / Map -->
+<aside class="space-y-6">
+<div class="glass-panel rounded-xl overflow-hidden h-full flex flex-col">
+<div class="p-4 border-b border-outline-variant/30 flex justify-between items-center">
+<span class="font-label-caps text-label-caps">Tactical View</span>
+<span class="font-data-mono text-[10px] text-primary-fixed">LIVE_FEED</span>
+</div>
+<div class="relative flex-grow min-h-[300px]">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A high-contrast tactical map of a modern sports stadium at night. The view is top-down, digital HUD style, featuring glowing green and red heat zones indicating crowd density. Small pulsing icons mark incident locations and volunteer units. The overall aesthetic is dark, clinical, and data-driven with technical grid overlays." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB3rPC1plTaZqKjcL1UKezHolbbt0-7CF1s8NmLVxnAJ0SOS5ZnnQTAp_6AjDOddUOX23eK9HngD9pV2iL20a7IqysjwNif1JnuDUTxEN2Lzxe4H0xVvNDscOAqvC9ST00Lw3Qy3u6m2w6z6VY1QMTIUjB3mLayk1Y0fX_kqUnS-e_OLR1DHFshHEk28qV07u0HCSLqVb1NxbpeXeNkWssfKEPhHuLyUj2EdDfBx4HBAPfsIgteB1I5rg')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<!-- Map HUD Overlays -->
+<div class="absolute bottom-4 left-4 right-4 flex flex-col gap-2">
+<div class="glass-panel bg-black/50 p-2 rounded flex justify-between items-center">
+<span class="font-data-mono text-[10px] uppercase">Zone 4 Congestion</span>
+<span class="w-3 h-3 bg-error rounded-full animate-pulse"></span>
+</div>
+<div class="glass-panel bg-black/50 p-2 rounded flex justify-between items-center">
+<span class="font-data-mono text-[10px] uppercase">Staff Tracking Active</span>
+<span class="font-data-mono text-[10px] text-primary-fixed">142 UNITS</span>
+</div>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low">
+<h4 class="font-label-caps text-label-caps mb-3">Unit Distribution</h4>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<span class="font-body-md text-[14px]">Perimeter</span>
+<div class="w-32 bg-white/10 h-1 rounded-full overflow-hidden">
+<div class="bg-primary-fixed h-full w-[80%]"></div>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-[14px]">Concourse</span>
+<div class="w-32 bg-white/10 h-1 rounded-full overflow-hidden">
+<div class="bg-primary-fixed h-full w-[45%]"></div>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-[14px]">VIP Suites</span>
+<div class="w-32 bg-white/10 h-1 rounded-full overflow-hidden">
+<div class="bg-primary-fixed h-full w-[15%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- NavigationDrawer (Hidden by default, used for structure reference) -->
+<nav class="fixed left-0 top-0 h-full w-80 bg-surface border-r border-primary-fixed/20 shadow-[20px_0_40px_rgba(0,0,0,0.8)] -translate-x-full transition-transform duration-300 z-[60] flex flex-col p-6 space-y-4" id="side-drawer">
+<div class="flex items-center gap-4 pb-6 border-b border-outline-variant/30">
+<div class="w-12 h-12 bg-primary-fixed/10 rounded border border-primary-fixed/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-fixed" style="font-variation-settings: 'FILL' 1;">person_filled</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-primary-fixed leading-tight">OPERATOR_01</h2>
+<p class="font-data-mono text-[12px] text-on-surface-variant">Tier 4 Access</p>
+</div>
+</div>
+<div class="flex-grow space-y-2 py-4">
+<a class="flex items-center gap-4 px-4 py-3 text-primary-fixed font-bold border-l-4 border-primary-fixed bg-primary-fixed/5 transition-all" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-body-md text-body-md">ALERTS</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">confirmation_number</span>
+<span class="font-body-md text-body-md">Ticketing</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">fastfood</span>
+<span class="font-body-md text-body-md">Food &amp; Bev</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-body-md text-body-md">Security Mode</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-t border-outline-variant/30 shadow-[0_-4px_20px_rgba(0,0,0,0.5)] md:hidden">
+<div class="flex justify-around items-center h-20 px-2 pb-safe w-full">
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-primary-fixed transition-all cursor-pointer">
+<span class="material-symbols-outlined">home_max</span>
+<span class="font-label-caps text-[10px] uppercase">HOME</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-primary-fixed transition-all cursor-pointer">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-caps text-[10px] uppercase">MAP</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary-fixed bg-primary-fixed/10 rounded-full py-1 px-4 border border-primary-fixed/40 shadow-[0_0_10px_rgba(210,240,0,0.3)] active:scale-90 duration-200">
+<span class="material-symbols-outlined">warning</span>
+<span class="font-label-caps text-[10px] uppercase">ALERTS</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-primary-fixed transition-all cursor-pointer">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-label-caps text-[10px] uppercase">COMMAND</span>
+</div>
+</div>
+</nav>
+<script>
+        // Simple micro-interactions
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.add('scale-95');
+                setTimeout(() => this.classList.remove('scale-95'), 150);
+            });
+        });
+
+        // Toggle Drawer
+        const menuBtn = document.querySelector('.material-symbols-outlined:first-child');
+        const drawer = document.getElementById('side-drawer');
+        let drawerOpen = false;
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            drawerOpen = !drawerOpen;
+            if(drawerOpen) {
+                drawer.style.transform = 'translateX(0)';
+            } else {
+                drawer.style.transform = 'translateX(-100%)';
+            }
+        });
+
+        document.body.addEventListener('click', () => {
+            if(drawerOpen) {
+                drawer.style.transform = 'translateX(-100%)';
+                drawerOpen = false;
+            }
+        });
+
+        drawer.addEventListener('click', (e) => e.stopPropagation());
+    </script>
+</body></html>

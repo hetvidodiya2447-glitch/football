@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StadiumIQ | Navigation &amp; Wayfinding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "surface": "#131313",
+                "surface-dim": "#131313",
+                "surface-bright": "#393939",
+                "surface-container-lowest": "#0e0e0e",
+                "surface-container-low": "#1c1b1b",
+                "surface-container": "#201f1f",
+                "surface-container-high": "#2a2a2a",
+                "surface-container-highest": "#353534",
+                "background": "#000000",
+                "primary": "#dfff00",
+                "on-primary": "#191e00",
+                "primary-container": "#dfff00",
+                "on-primary-container": "#5d6b00",
+                "secondary": "#dcb8ff",
+                "on-secondary": "#480081",
+                "secondary-container": "#7701d0",
+                "on-secondary-container": "#dcb7ff",
+                "error": "#ffb4ab",
+                "on-error": "#690005",
+                "outline": "#909378",
+                "outline-variant": "#454932",
+                "on-surface": "#e5e2e1",
+                "on-surface-variant": "#c6c9ab"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "spacing": {
+                "gutter": "16px",
+                "margin-desktop": "32px",
+                "unit": "4px",
+                "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                "display-xl": ["Anybody"],
+                "body-md": ["Anybody"],
+                "label-caps": ["Anybody"],
+                "headline-md": ["Anybody"],
+                "body-lg": ["Anybody"],
+                "headline-sm": ["Anybody"],
+                "headline-lg": ["Anybody"],
+                "headline-lg-mobile": ["Anybody"]
+            },
+            "fontSize": {
+                "display-xl": ["72px", {"lineHeight": "1.0", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.15em", "fontWeight": "700"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                "headline-sm": ["20px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                "headline-lg": ["40px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "headline-lg-mobile": ["32px", {"lineHeight": "1.1", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #000000;
+            color: #e5e2e1;
+            font-family: 'Anybody', sans-serif;
+            overflow: hidden;
+        }
+
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0) 50%,
+                rgba(223, 255, 0, 0.02) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .glass-panel {
+            background: rgba(26, 26, 26, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(223, 255, 0, 0.1);
+        }
+
+        .volt-glow {
+            box-shadow: 0 0 15px rgba(223, 255, 0, 0.4);
+        }
+
+        @keyframes pulse-volt {
+            0%, 100% { filter: drop-shadow(0 0 8px #dfff00); opacity: 1; }
+            50% { filter: drop-shadow(0 0 20px #dfff00); opacity: 0.8; }
+        }
+
+        .animate-volt {
+            animation: pulse-volt 2s infinite;
+        }
+
+        .map-container {
+            perspective: 1200px;
+        }
+
+        .stadium-3d {
+            transform: rotateX(45deg) rotateZ(-15deg);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .neon-path {
+            filter: drop-shadow(0 0 8px #dfff00);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="font-body-md selection:bg-primary selection:text-on-primary">
+<div class="scanlines"></div>
+<!-- Top Navigation -->
+<header class="fixed top-0 z-[60] w-full border-b border-outline-variant/30 bg-surface/70 backdrop-blur-xl flex justify-between items-center px-margin-mobile h-16">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary p-2 hover:bg-primary/10 transition-colors rounded-full">menu</button>
+<h1 class="text-headline-lg-mobile font-headline-lg-mobile italic uppercase tracking-tighter text-primary">STADIUM_IQ</h1>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex gap-8">
+<a class="text-label-caps font-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">DASHBOARD</a>
+<a class="text-label-caps font-label-caps text-primary border-b-2 border-primary pb-1" href="#">MAP</a>
+<a class="text-label-caps font-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">OPERATIONS</a>
+</nav>
+<div class="w-10 h-10 rounded-full border border-primary/50 overflow-hidden volt-glow">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7CRbwzggMV4Q3V0pAam9cXI-gLOQZzo7ppctH6P8waylaqQJeqmNrq08WJB1ThU7jEiP1Afaqtnicy_3UCu6A9IkUQ-tF0dGM6j1LAGiTTKx7GUT95Ga-H9uWGZvUATvuazOgvMPeXsWmrTTEjXyZd6CMEX-2v5O6n7OOiwt3N3w4Duy6vBShMedivyRqKGf3cAy1JnDweIcD0PPrEkMpO2vlKAbbEJBHwW-0czEeEhr8PjrM9c-Zyg"/>
+</div>
+</div>
+</header>
+<!-- Main Map Canvas -->
+<main class="relative w-full h-screen overflow-hidden map-container flex items-center justify-center pt-16">
+<!-- 3D Stadium Visualization -->
+<div class="stadium-3d relative w-[140%] h-[140%] flex items-center justify-center" id="stadium-map">
+<div class="relative w-[600px] h-[400px] bg-surface-container-lowest/80 border-2 border-primary/20 rounded-full flex items-center justify-center overflow-hidden shadow-[0_0_100px_rgba(223,255,0,0.05)]">
+<!-- Inner Field Simulated 3D Elements -->
+<div class="w-[300px] h-[180px] border border-primary/40 bg-primary/5 rounded-sm relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent"></div>
+<div class="absolute top-1/2 left-0 w-full h-[1px] bg-primary/30"></div>
+</div>
+<!-- Optimal Path Overlay -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" viewbox="0 0 600 400">
+<!-- Dynamic Navigation Path -->
+<path class="neon-path" d="M 100 300 Q 200 350 300 200 T 500 100" fill="none" stroke="#dfff00" stroke-dasharray="12 8" stroke-width="4">
+<animate attributename="stroke-dashoffset" dur="4s" from="200" repeatcount="indefinite" to="0"></animate>
+</path>
+<!-- Congested Areas -->
+<circle class="animate-pulse" cx="350" cy="250" fill="rgba(255, 180, 171, 0.15)" r="35" stroke="#ffb4ab" stroke-width="1.5"></circle>
+<text class="font-label-caps text-[9px] fill-error uppercase opacity-80" x="325" y="253">CONGESTION</text>
+<!-- User Location -->
+<circle class="animate-volt" cx="100" cy="300" fill="#dfff00" r="6"></circle>
+<!-- Destination Marker -->
+<g transform="translate(500, 100)">
+<circle class="volt-glow" fill="#dfff00" r="8"></circle>
+<text class="font-label-caps text-[11px] fill-primary font-bold" x="-45" y="-15">SECTOR_B4</text>
+</g>
+</svg>
+</div>
+</div>
+<!-- Glassmorphic Map Overlays -->
+<div class="absolute left-margin-mobile top-32 flex flex-col gap-4 z-40">
+<div class="glass-panel p-4 w-56 rounded-xl border-l-4 border-l-primary">
+<h3 class="text-label-caps font-label-caps text-primary mb-1">LOCATION</h3>
+<p class="font-headline-sm text-on-surface uppercase">Sector A - Gate 4</p>
+</div>
+<div class="glass-panel p-4 w-56 rounded-xl">
+<h3 class="text-label-caps font-label-caps text-on-surface-variant mb-1">ETA</h3>
+<p class="font-headline-sm text-on-surface uppercase tracking-wider">04:12 <span class="text-sm opacity-60">MIN</span></p>
+</div>
+</div>
+<!-- Map Controls -->
+<div class="absolute right-margin-mobile top-1/2 -translate-y-1/2 flex flex-col gap-3 z-40">
+<button class="w-12 h-12 glass-panel flex items-center justify-center text-primary hover:bg-primary/20 transition-all rounded-lg">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="w-12 h-12 glass-panel flex items-center justify-center text-primary hover:bg-primary/20 transition-all rounded-lg">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<button class="w-12 h-12 glass-panel flex items-center justify-center text-primary hover:bg-primary/20 transition-all rounded-lg" id="recenter-btn">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+</div>
+<!-- Navigation Status Overlay -->
+<section class="fixed bottom-24 left-1/2 -translate-x-1/2 w-[calc(100%-32px)] max-w-lg z-40">
+<div class="glass-panel rounded-xl overflow-hidden shadow-2xl">
+<!-- Advisory Banner -->
+<div class="px-4 py-2 bg-primary/10 border-b border-primary/20 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary animate-volt"></div>
+<span class="text-label-caps font-label-caps text-primary">AI_NAVIGATOR // ACTIVE</span>
+</div>
+<span class="text-label-caps font-label-caps text-primary opacity-60 italic">STADIUM_MODE</span>
+</div>
+<!-- Rerouting Advisory -->
+<div class="px-4 py-2 bg-error/10 border-b border-error/20 flex items-center gap-3">
+<span class="material-symbols-outlined text-error text-sm">warning</span>
+<span class="text-label-caps text-error uppercase font-bold text-[10px]">REROUTING ADVISORY: ZONE B CONGESTED</span>
+</div>
+<!-- Current Step -->
+<div class="p-5 flex flex-col gap-4">
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container border border-outline-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">turn_right</span>
+</div>
+<div class="flex-1">
+<h3 class="text-headline-sm text-on-surface uppercase mb-1">Exit Gate 4</h3>
+<p class="text-body-md text-on-surface-variant text-sm">Proceed toward Concourse North for optimized flow.</p>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="w-2/3 h-full bg-primary shadow-[0_0_8px_#dfff00]"></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-t border-outline-variant/30 flex justify-around items-center h-20 px-2 pb-safe">
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-primary transition-all">
+<span class="material-symbols-outlined">stadium</span>
+<span class="font-label-caps text-label-caps mt-1">HUB</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl py-2 px-6 border border-primary/30 shadow-[0_0_15px_rgba(223,255,0,0.2)]">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-caps text-label-caps mt-1">MAP</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-primary transition-all">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-label-caps text-label-caps mt-1">ALERTS</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:text-primary transition-all">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-label-caps text-label-caps mt-1">IQ</span>
+</div>
+</nav>
+<script>
+        const stadium = document.getElementById('stadium-map');
+        const recenterBtn = document.getElementById('recenter-btn');
+
+        let isDragging = false;
+        let startX, startY;
+        let rotX = 45;
+        let rotZ = -15;
+
+        // Interaction for the 3D map
+        document.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            
+            rotZ += dx * 0.2;
+            rotX = Math.max(20, Math.min(80, rotX - dy * 0.2));
+            
+            stadium.style.transform = `rotateX(${rotX}deg) rotateZ(${rotZ}deg)`;
+            
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        recenterBtn.addEventListener('click', () => {
+            rotX = 45;
+            rotZ = -15;
+            stadium.style.transform = `rotateX(45deg) rotateZ(-15deg)`;
+        });
+
+        // Parallax for glass panels
+        window.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            document.querySelectorAll('.glass-panel').forEach(panel => {
+                const shiftX = (x - 0.5) * 8;
+                const shiftY = (y - 0.5) * 8;
+                panel.style.transform = `translate(${shiftX}px, ${shiftY}px)`;
+            });
+        });
+    </script>
+</body></html>

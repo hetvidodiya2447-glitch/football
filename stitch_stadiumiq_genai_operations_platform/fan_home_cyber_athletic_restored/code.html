@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StadiumIQ | Fan Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#191e00",
+                    "tertiary-container": "#7df4ff",
+                    "surface": "#131313",
+                    "on-tertiary": "#00363a",
+                    "primary-fixed": "#d2f000",
+                    "surface-tint": "#b8d300",
+                    "secondary-container": "#7701d0",
+                    "secondary-fixed-dim": "#dcb8ff",
+                    "on-tertiary-fixed-variant": "#004f54",
+                    "error": "#ffb4ab",
+                    "on-primary-fixed-variant": "#414c00",
+                    "surface-container-highest": "#353534",
+                    "tertiary-fixed-dim": "#00dbe9",
+                    "outline": "#909378",
+                    "on-secondary-container": "#dcb7ff",
+                    "surface-variant": "#353534",
+                    "on-tertiary-fixed": "#002022",
+                    "secondary": "#dcb8ff",
+                    "on-surface": "#e5e2e1",
+                    "on-tertiary-container": "#006f77",
+                    "background": "#131313",
+                    "primary-fixed-dim": "#b8d300",
+                    "on-primary-container": "#5d6b00",
+                    "tertiary-fixed": "#7df4ff",
+                    "on-secondary-fixed": "#2c0051",
+                    "inverse-primary": "#576500",
+                    "inverse-on-surface": "#313030",
+                    "error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#6700b5",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-primary": "#2c3400",
+                    "outline-variant": "#454932",
+                    "secondary-fixed": "#efdbff",
+                    "tertiary": "#ffffff",
+                    "on-secondary": "#480081",
+                    "primary": "#ffffff",
+                    "surface-container": "#201f1f",
+                    "surface-bright": "#393939",
+                    "on-error": "#690005",
+                    "on-surface-variant": "#c6c9ab",
+                    "primary-container": "#d2f000",
+                    "surface-dim": "#131313",
+                    "surface-container-low": "#1c1b1b",
+                    "on-background": "#e5e2e1",
+                    "surface-container-high": "#2a2a2a",
+                    "on-error-container": "#ffdad6",
+                    "inverse-surface": "#e5e2e1",
+                    "cyber-volt": "#DFFF00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin-desktop": "48px",
+                    "unit": "4px",
+                    "margin-mobile": "16px",
+                    "skew-angle": "-12deg"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Anybody"],
+                    "body-md": ["Anybody"],
+                    "label-caps": ["Anybody"],
+                    "headline-md": ["Anybody"],
+                    "body-lg": ["Anybody"],
+                    "headline-sm": ["Anybody"],
+                    "display-xl": ["Anybody"],
+                    "headline-lg-mobile": ["Anybody"]
+            },
+            "fontSize": {
+                    "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "headline-md": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "display-xl": ["72px", {"lineHeight": "1.0", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "headline-lg-mobile": ["36px", {"lineHeight": "1.1", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #000000;
+            background-image: 
+                linear-gradient(rgba(223, 255, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(223, 255, 0, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .glass-panel {
+            background: rgba(26, 26, 26, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(223, 255, 0, 0.15);
+        }
+        .volt-glow {
+            box-shadow: 0 0 15px rgba(223, 255, 0, 0.2);
+        }
+        .tech-id {
+            font-family: 'Anybody', sans-serif;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            color: rgba(223, 255, 0, 0.6);
+            text-transform: uppercase;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-on-background font-body-md min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-black/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center w-full px-gutter py-4 sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-cyber-volt p-2">menu</button>
+<h1 class="text-headline-md font-bold tracking-tighter text-cyber-volt italic uppercase">STADIUMIQ</h1>
+</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-label-caps text-cyber-volt border-b-2 border-cyber-volt pb-1" href="#">HUB</a>
+<a class="text-label-caps text-on-surface-variant hover:text-cyber-volt transition-colors" href="#">ALERTS</a>
+<a class="text-label-caps text-on-surface-variant hover:text-cyber-volt transition-colors" href="#">MAP</a>
+<a class="text-label-caps text-on-surface-variant hover:text-cyber-volt transition-colors" href="#">CROWD</a>
+</div>
+<div class="w-10 h-10 rounded-full border border-cyber-volt/40 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A close-up high-contrast portrait of a stadium operations professional with a sleek digital headset, shot in cinematic low lighting with electric blue and high-vis yellow neon reflections." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9U0LXshLZHYi4vNHXeCCIYlbaQh65HtPveenhX8gfUkhGTUiWeH4pQp7btXa-gvIBYxaJBa6D_gd7AQQ85TlOm6l7LaNcn-daN-0Q3Xn0yp9o6h_AQRIoSjDit2aMMSAU1RdM0FkRAyVbdRJtc32fTwsz5RJAz44H1hOCQzFipyNVA6cHPs2UqEds3Gyx17txm8ksgbNm1scLjGVUbdiIhwDGgB1SoW3x2WFzN0Gu1lH5FIqHBynG4g"/>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 md:px-gutter mt-8 space-y-6">
+<!-- Live Score Hero -->
+<section class="relative">
+<div class="glass-panel volt-glow p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+<div class="absolute top-2 right-4 tech-id">LIVE_MATCH_STREAM_V2.4</div>
+<!-- Team 1 -->
+<div class="flex items-center gap-6 z-10 w-full md:w-auto">
+<div class="flex flex-col md:items-start text-center md:text-left">
+<span class="text-label-caps text-on-surface-variant/60">HOME</span>
+<h2 class="text-headline-lg font-bold uppercase italic leading-none">TITANS</h2>
+</div>
+<div class="text-display-xl font-bold text-cyber-volt ml-auto md:ml-0">2</div>
+</div>
+<!-- VS & Clock -->
+<div class="flex flex-col items-center z-10">
+<div class="text-cyber-volt font-bold animate-pulse mb-1">LIVE - 74'</div>
+<div class="w-px h-8 bg-white/20 mb-2"></div>
+<div class="text-headline-sm font-bold text-on-surface-variant/40">VS</div>
+<div class="w-px h-8 bg-white/20 mt-2"></div>
+</div>
+<!-- Team 2 -->
+<div class="flex items-center gap-6 z-10 w-full md:w-auto md:flex-row-reverse">
+<div class="flex flex-col md:items-end text-center md:text-right">
+<span class="text-label-caps text-on-surface-variant/60">AWAY</span>
+<h2 class="text-headline-lg font-bold uppercase italic leading-none">APEX</h2>
+</div>
+<div class="text-display-xl font-bold text-primary mr-auto md:mr-0">1</div>
+</div>
+<!-- Progress Bar -->
+<div class="absolute bottom-0 left-0 w-full h-1 bg-white/10">
+<div class="h-full bg-cyber-volt volt-glow" style="width: 74%"></div>
+</div>
+</div>
+</section>
+<!-- Smart Status Cards & AI -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Gate Status -->
+<div class="glass-panel p-6 space-y-4">
+<div class="flex justify-between items-start">
+<div class="tech-id">ENTRY_PT_04</div>
+<span class="w-2 h-2 rounded-full bg-cyber-volt volt-glow"></span>
+</div>
+<div>
+<p class="text-label-caps text-on-surface-variant">GATE 4 STATUS</p>
+<p class="text-headline-md font-bold text-cyber-volt">CLEAR</p>
+</div>
+<div class="flex items-center gap-2 text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-cyber-volt">timer</span>
+<span>WAIT TIME: 2m</span>
+</div>
+</div>
+<!-- Concourse Status -->
+<div class="glass-panel p-6 space-y-4 border-secondary/20">
+<div class="flex justify-between items-start">
+<div class="tech-id">CONCOURSE_B</div>
+<span class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_10px_rgba(255,255,255,0.3)]"></span>
+</div>
+<div>
+<p class="text-label-caps text-on-surface-variant">CONCOURSE B</p>
+<p class="text-headline-md font-bold text-secondary">MODERATE</p>
+</div>
+<div class="flex items-center gap-2 text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary">groups</span>
+<span>CAPACITY: 64%</span>
+</div>
+</div>
+<!-- Ask IQ AI Widget -->
+<div class="lg:col-span-2 glass-panel p-6 flex flex-col justify-center border-cyber-volt/30">
+<div class="flex justify-between items-center mb-2">
+<div class="tech-id">IQ_COGNITIVE_ASSISTANT</div>
+<div class="bg-cyber-volt text-black text-[10px] px-2 py-0.5 font-bold uppercase rounded">GenAI</div>
+</div>
+<h3 class="text-headline-sm font-bold text-primary mb-4">ASK IQ</h3>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-cyber-volt/60">psychology</span>
+<input class="w-full bg-black/40 border border-white/10 rounded-lg py-3 pl-12 pr-12 text-body-md focus:border-cyber-volt outline-none transition-all placeholder:text-on-surface-variant/30" placeholder="Where is the nearest water station?" type="text"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-cyber-volt">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Match Performance Analytics -->
+<section class="glass-panel p-6">
+<div class="flex justify-between items-center mb-6">
+<div class="tech-id">PERFORMANCE_ANALYTICS</div>
+<span class="material-symbols-outlined text-cyber-volt">analytics</span>
+</div>
+<div class="grid grid-cols-3 gap-8">
+<div class="text-center">
+<div class="text-headline-md font-bold text-cyber-volt">58%</div>
+<div class="text-label-caps text-[10px] text-on-surface-variant/60">POSSESSION</div>
+</div>
+<div class="text-center border-x border-white/10">
+<div class="text-headline-md font-bold text-cyber-volt">12</div>
+<div class="text-label-caps text-[10px] text-on-surface-variant/60">SHOTS (ON)</div>
+</div>
+<div class="text-center">
+<div class="text-headline-md font-bold text-cyber-volt">94%</div>
+<div class="text-label-caps text-[10px] text-on-surface-variant/60">PASS ACC</div>
+</div>
+</div>
+</section>
+<!-- Match Day Offers -->
+<section class="space-y-6">
+<div class="flex items-center justify-between border-l-2 border-cyber-volt pl-4">
+<h3 class="text-headline-sm font-bold uppercase tracking-widest">OFFERS</h3>
+<button class="text-label-caps text-on-surface-variant hover:text-cyber-volt flex items-center gap-2">VIEW ALL <span class="material-symbols-outlined">arrow_forward</span></button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Offer 1 -->
+<div class="relative h-48 rounded-lg overflow-hidden group border border-white/10">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDgEs1VoOvN82wL3jSjkCel9KpiCmU9Jl-4MaDCf9xe2O7hLcrKUicvv-rrPw9Y5c31pGzqHfqccWyYtLqrBzZp_yJUZw58pfs3O89jAmyHHwpinLfw_Qp2cJo4oMwLgAGaMB_x5370bwwH-ol9nX81ko5J0dXYaxKACdbSqhwUzOPD6GxoISJWyH8mc7brbzvhX0cCZi3m_5tokzx5L5JaIYGqx2JPMnk2k2xasKMZSfIkpZKn0PTRFQ')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-5 w-full flex justify-between items-end">
+<div>
+<div class="tech-id mb-1">FUEL_PACK_X</div>
+<h3 class="text-headline-sm font-bold text-white uppercase italic leading-none">PRE-MATCH COMBO</h3>
+<p class="text-body-md text-cyber-volt">20% OFF AT SECTOR 7</p>
+</div>
+<button class="bg-cyber-volt text-black font-bold text-label-caps px-4 py-2 hover:brightness-110 transition-all active:scale-95">REDEEM</button>
+</div>
+</div>
+<!-- Offer 2 -->
+<div class="relative h-48 rounded-lg overflow-hidden group border border-white/10">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBiCcQpZNHiolRw9E-B8cRBWZHIdLwJotCikRkmcexOt88HN506TrEtgxUxD8OhG6nSdQG9SQMgf7yHqPkW6EdzL1o1u7sO3R45oNrHJ7JD1TMKmirB2GPg221Mt-gIUDrFkpLdC6FAn_FIr9ZuNPHkaDuAzxfJDMTaWRrUJhHdig6Podj8N49ckNCwPBImBAITOYuWNj90m3X31DrhvHuIiRTKT4jSBuKgsxT34cd1D0kPbuckuucUSA')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-5 w-full flex justify-between items-end">
+<div>
+<div class="tech-id mb-1">LIMITED_DROP_01</div>
+<h3 class="text-headline-sm font-bold text-white uppercase italic leading-none">CYBER-KIT 2024</h3>
+<p class="text-body-md text-on-surface-variant">NEW SEASON DROP</p>
+</div>
+<button class="border border-cyber-volt text-cyber-volt font-bold text-label-caps px-4 py-2 hover:bg-cyber-volt hover:text-black transition-all">SHOP</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-black/80 backdrop-blur-xl border-t border-white/10 md:hidden">
+<a class="flex flex-col items-center justify-center text-cyber-volt bg-cyber-volt/10 border border-cyber-volt/20 rounded-lg px-4 py-1.5 shadow-[0_0_15px_rgba(223,255,0,0.1)]" href="#">
+<span class="material-symbols-outlined">home_max</span>
+<span class="text-label-caps mt-1">HUB</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 px-4 py-1.5 hover:text-cyber-volt" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-label-caps mt-1">MAP</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 px-4 py-1.5 hover:text-cyber-volt" href="#">
+<span class="material-symbols-outlined">warning</span>
+<span class="text-label-caps mt-1">ALERTS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 px-4 py-1.5 hover:text-cyber-volt" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="text-label-caps mt-1">DATA</span>
+</a>
+</nav>
+<script>
+    // Micro-interaction for ticking clock
+    const clockDisplay = document.querySelector('.text-cyber-volt.animate-pulse');
+    if (clockDisplay) {
+        let elapsed = 74 * 60 + 17; 
+        setInterval(() => {
+            elapsed++;
+            const mins = Math.floor(elapsed / 60);
+            const secs = elapsed % 60;
+            clockDisplay.innerText = `LIVE - ${mins}'`;
+        }, 1000);
+    }
+</script>
+</body></html>

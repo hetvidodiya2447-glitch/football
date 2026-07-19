@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StadiumIQ | Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#ffffff",
+                        "primary-fixed": "#dfff00",
+                        "on-primary-fixed": "#191e00",
+                        "secondary": "#dcb8ff",
+                        "tertiary": "#ffffff",
+                        "surface": "#131313",
+                        "surface-dim": "#131313",
+                        "surface-bright": "#393939",
+                        "background": "#000000",
+                        "on-background": "#e5e2e1",
+                        "on-surface": "#e5e2e1",
+                        "on-surface-variant": "#c6c9ab",
+                        "outline": "#909378",
+                        "outline-variant": "#454932",
+                        "error": "#ffb4ab",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container": "#201f1f",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-highest": "#353534",
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "gutter": "16px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                    },
+                    "fontFamily": {
+                        "display-xl": ["Anybody"],
+                        "headline-lg": ["Anybody"],
+                        "headline-md": ["Anybody"],
+                        "headline-sm": ["Anybody"],
+                        "body-lg": ["Anybody"],
+                        "body-md": ["Anybody"],
+                        "label-caps": ["Anybody"]
+                    },
+                    "fontSize": {
+                        "display-xl": ["72px", {"lineHeight": "1.0", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                        "headline-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.15em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #000000;
+            color: #e5e2e1;
+            font-family: 'Anybody', sans-serif;
+            min-height: 100dvh;
+        }
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0.05;
+        }
+        .glass-card {
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(223, 255, 0, 0.3);
+            box-shadow: 0 0 20px rgba(223, 255, 0, 0.05);
+        }
+        .volt-glow {
+            box-shadow: 0 0 15px rgba(223, 255, 0, 0.4);
+        }
+        .volt-text-glow {
+            text-shadow: 0 0 10px rgba(223, 255, 0, 0.5);
+        }
+        .tech-id {
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            color: rgba(223, 255, 0, 0.6);
+            font-family: 'Anybody', monospace;
+        }
+        @keyframes pulse-dot {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .status-dot {
+            animation: pulse-dot 2s infinite;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #dfff00;
+        }
+    </style>
+</head>
+<body class="selection:bg-primary-fixed selection:text-on-primary-fixed">
+<div class="scanlines"></div>
+<!-- Top Navigation -->
+<header class="fixed top-0 w-full z-50 bg-surface/70 backdrop-blur-xl border-b border-outline-variant/30 flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer hover:bg-primary-fixed/10 p-2 rounded transition-colors">menu</span>
+<h1 class="text-headline-md md:text-headline-lg font-headline-lg italic uppercase tracking-tighter text-primary-fixed volt-text-glow">STADIUMIQ</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8 h-full">
+<a class="font-label-caps text-label-caps text-primary-fixed border-b-2 border-primary-fixed h-full flex items-center px-2" href="#">HUB</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary-fixed transition-colors" href="#">ALERTS</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary-fixed transition-colors" href="#">MAP</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary-fixed transition-colors" href="#">CROWD</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex flex-col items-end">
+<span class="text-[10px] font-label-caps text-on-surface-variant">OPERATOR_01</span>
+<span class="text-[8px] font-label-caps text-primary-fixed">TIER 4 ACCESS</span>
+</div>
+<div class="w-10 h-10 rounded-full border border-primary-fixed/30 bg-surface-container-high overflow-hidden flex items-center justify-center">
+<img alt="Operator" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCv6H7jga14sCxFBXSYgpXLA_oL6CSj3ikVBae8GIHwv3LJ5TgVDHnOAaWy5SG3QbVMcNYjzykMnhwfYVFowQqntst08VYD6V1WnY9sgtlphD7r6un-xyvPL5-pqK1GX6FZ1bR_Mih4xk6hIzGEHUYoZaWPVmCHiIX_mPX1iJBq_Pgo93sI_H5BMfTuDXqNxg6PLYh2k4ZFGWfbP8TeqTn-DLGuetPxrNzt4VTvbLAzuCAft5qnlEiEOg"/>
+</div>
+</div>
+</header>
+<main class="pt-20 pb-32 px-margin-mobile md:px-margin-desktop max-w-[1600px] mx-auto space-y-6">
+<!-- Live Ops Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="bg-primary-fixed text-black px-3 py-1 font-label-caps text-xs flex items-center gap-2 volt-glow">
+<span class="w-2 h-2 rounded-full bg-black status-dot"></span>
+                    LIVE_OPS_OVERVIEW
+                </div>
+<span class="text-on-surface-variant text-[10px] font-label-caps">KICK-OFF IN 45:00</span>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-high border border-outline-variant px-4 py-1.5 text-label-caps text-on-surface hover:border-primary-fixed transition-all text-[10px]">REFRESH_DATA</button>
+<button class="bg-primary-fixed border border-black px-4 py-1.5 text-label-caps text-black hover:brightness-110 transition-all text-[10px]">GENERATE_REPORT</button>
+</div>
+</div>
+<!-- Metrics Row -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<!-- Total Attendance -->
+<div class="md:col-span-2 glass-card p-6 relative overflow-hidden group">
+<div class="tech-id mb-2">METRIC_ATTENDANCE_01</div>
+<div class="flex justify-between items-end">
+<div>
+<div class="font-label-caps text-label-caps text-on-surface-variant opacity-60">TOTAL ATTENDANCE</div>
+<div class="font-display-xl text-[56px] leading-tight text-primary-fixed volt-text-glow mt-1">54,892</div>
+</div>
+<div class="text-right">
+<div class="text-primary-fixed flex items-center gap-1 font-label-caps text-xs">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                            +2.4%
+                        </div>
+<div class="font-label-caps text-[10px] text-on-surface-variant">CAPACITY: 91.5%</div>
+</div>
+</div>
+<div class="mt-4 h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary-fixed w-[91.5%] shadow-[0_0_10px_#dfff00]"></div>
+</div>
+</div>
+<!-- Gate Flow -->
+<div class="glass-card p-6 relative overflow-hidden">
+<div class="tech-id mb-2">METRIC_FLOW_02</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant opacity-60">GATE_FLOW_RATE</div>
+<div class="font-display-xl text-[48px] leading-tight text-white mt-1">142<span class="text-2xl opacity-40">/min</span></div>
+<div class="mt-4 flex items-end gap-1 h-12">
+<div class="flex-1 bg-primary-fixed h-[40%] opacity-40"></div>
+<div class="flex-1 bg-primary-fixed h-[60%] opacity-60"></div>
+<div class="flex-1 bg-primary-fixed h-[80%] opacity-80"></div>
+<div class="flex-1 bg-primary-fixed h-[75%] opacity-70"></div>
+<div class="flex-1 bg-primary-fixed h-[90%] volt-glow"></div>
+</div>
+<p class="mt-3 text-[10px] font-label-caps text-error uppercase">CONGESTION ALERT: GATE 7</p>
+</div>
+<!-- Concession Load -->
+<div class="glass-card p-6 relative overflow-hidden">
+<div class="tech-id mb-2">METRIC_LOGISTICS_03</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant opacity-60">CONCESSION_LOAD</div>
+<div class="font-display-xl text-[48px] leading-tight text-white mt-1">78<span class="text-2xl opacity-40">%</span></div>
+<div class="mt-4 grid grid-cols-5 gap-1.5">
+<div class="h-6 bg-primary-fixed"></div>
+<div class="h-6 bg-primary-fixed"></div>
+<div class="h-6 bg-primary-fixed"></div>
+<div class="h-6 bg-primary-fixed"></div>
+<div class="h-6 bg-white/10"></div>
+</div>
+<p class="mt-3 text-[10px] font-label-caps text-primary-fixed uppercase">AVG WAIT: 4.2 MIN</p>
+</div>
+</section>
+<!-- Main Heatmap Grid -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Heatmap View -->
+<div class="lg:col-span-8 glass-card min-h-[400px] relative overflow-hidden">
+<div class="absolute top-4 left-4 z-10 flex flex-col gap-2">
+<div class="bg-black/80 backdrop-blur-md px-3 py-1.5 border border-primary-fixed/30 rounded flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-fixed text-sm">videocam</span>
+<span class="font-label-caps text-[10px]">LIVE FEED: SECTOR_A7</span>
+<div class="w-2 h-2 rounded-full bg-red-600 status-dot"></div>
+</div>
+</div>
+<!-- Technical Background -->
+<div class="absolute inset-0 grayscale opacity-20" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDlb3LLFXqpO56NVgC-F1EUUF-O6Pf1rq9-s7D-tyrhks_mSj07w1lyfbi2DKm7f3ViLgtL-6eFnVXrzwmDbUtje0AJXpH3yLr4TFU-xNFu-wMGODzFAl_GvKG4c7HsX74fF-RYnYzr2Gh6e8lNi4ni1OC4Nss20TLwWdwF8OplTrrPqaWquENyy8Qj7WLOI5LP3LsLiD7x431epHP9ICBOt_oY6aZkunN_GvMDgAx3dktzS7R_-AOLXw'); background-size: cover; background-position: center;"></div>
+<!-- Heatmap Overlay Simulation -->
+<div class="absolute inset-0 pointer-events-none opacity-60" style="background: radial-gradient(circle at 40% 50%, rgba(223, 255, 0, 0.4) 0%, transparent 40%), radial-gradient(circle at 70% 30%, rgba(255, 60, 60, 0.3) 0%, transparent 30%);"></div>
+<div class="absolute bottom-4 right-4 z-10 bg-black/80 backdrop-blur-md p-4 border border-white/10 rounded w-48">
+<div class="font-label-caps text-[10px] text-on-surface-variant mb-2">HEATMAP_LEGEND</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-red-600 rounded-sm"></div>
+<span class="text-[9px] font-label-caps uppercase">Critical (95%+)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-primary-fixed rounded-sm"></div>
+<span class="text-[9px] font-label-caps uppercase">Optimal (60-80%)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Zone Status -->
+<div class="lg:col-span-4 space-y-4">
+<h2 class="text-label-caps font-label-caps text-primary-fixed flex items-center gap-2">
+<span class="w-1 h-4 bg-primary-fixed"></span>
+                    ZONE_STATUS_MONITOR
+                </h2>
+<div class="grid grid-cols-1 gap-3">
+<div class="glass-card p-4 hover:border-primary-fixed/40 cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<span class="tech-id">ZONE_NORTH_TIER</span>
+<span class="bg-primary-fixed/20 text-primary-fixed px-2 py-0.5 text-[9px] font-label-caps">OPTIMAL</span>
+</div>
+<div class="flex justify-between items-end">
+<h4 class="text-headline-sm font-headline-sm">SECTION_A</h4>
+<span class="text-headline-md text-primary-fixed volt-text-glow">88%</span>
+</div>
+</div>
+<div class="glass-card p-4 hover:border-error/40 cursor-pointer border-error/20">
+<div class="flex justify-between items-start mb-2">
+<span class="tech-id text-error/60">ZONE_SOUTH_TERRACE</span>
+<span class="bg-error/20 text-error px-2 py-0.5 text-[9px] font-label-caps">HIGH_LOAD</span>
+</div>
+<div class="flex justify-between items-end">
+<h4 class="text-headline-sm font-headline-sm text-error">SECTION_D</h4>
+<span class="text-headline-md text-error">96%</span>
+</div>
+</div>
+<div class="glass-card p-4 hover:border-primary-fixed/40 cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<span class="tech-id">ZONE_EAST_VIP</span>
+<span class="bg-white/10 text-white/60 px-2 py-0.5 text-[9px] font-label-caps">STABLE</span>
+</div>
+<div class="flex justify-between items-end">
+<h4 class="text-headline-sm font-headline-sm">SUITES_01-12</h4>
+<span class="text-headline-md">64%</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Copilot Terminal -->
+<section class="glass-card border-primary-fixed/30 p-1 relative overflow-hidden group">
+<div class="bg-primary-fixed text-black px-4 py-2 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">neurology</span>
+<h3 class="font-label-caps text-[11px] font-bold tracking-widest italic">COPILOT_IQ_v4.2 // TERMINAL</h3>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-[9px] font-label-caps animate-pulse">ANALYZING_REALTIME_STREAMS...</span>
+<div class="flex gap-1">
+<div class="w-1.5 h-1.5 bg-black rounded-full"></div>
+<div class="w-1.5 h-1.5 bg-black rounded-full opacity-30"></div>
+<div class="w-1.5 h-1.5 bg-black rounded-full opacity-30"></div>
+</div>
+</div>
+</div>
+<div class="p-6 h-64 flex flex-col font-mono text-sm overflow-hidden bg-black/40">
+<div class="flex-grow space-y-4 overflow-y-auto mb-4 pr-2 custom-scrollbar" id="chat-feed">
+<div class="flex items-start gap-4">
+<span class="text-primary-fixed shrink-0 font-bold">&gt;</span>
+<div class="space-y-2">
+<p class="text-primary-fixed leading-relaxed">Analyzing crowd flow patterns in North-East quadrant...</p>
+<p class="text-on-surface-variant opacity-70">Detecting surge at Section D-14. Bottle-neck predicted in T-minus 4 minutes. Average wait time trending toward +6m.</p>
+<div class="bg-primary-fixed/5 border-l-2 border-primary-fixed p-3 mt-2">
+<p class="text-white text-xs">RECOMENDATION: Suggest opening Gate 8 and re-routing auxiliary staff to Sector C. Dispatch unit Alpha-9 for crowd redistribution.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative mt-auto">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="text-primary-fixed font-bold">&gt;</span>
+</div>
+<input class="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-32 py-3 text-sm focus:border-primary-fixed focus:ring-0 text-primary-fixed font-mono placeholder:text-white/20" placeholder="QUERY_SYSTEM_OR_SEND_COMMAND..." type="text"/>
+<button class="absolute right-2 top-2 bottom-2 bg-primary-fixed text-black px-6 font-label-caps text-[10px] hover:brightness-110 transition-all">EXEC_CMD</button>
+</div>
+</div>
+<!-- Technical Corner Elements -->
+<div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-primary-fixed z-10"></div>
+<div class="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-primary-fixed z-10"></div>
+<div class="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-primary-fixed z-10"></div>
+<div class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-primary-fixed z-10"></div>
+</section>
+</main>
+<!-- Mobile Navigation -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-4 bg-surface/80 backdrop-blur-xl border-t border-outline-variant/30 md:hidden">
+<a class="flex flex-col items-center justify-center text-primary-fixed" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[8px] font-label-caps mt-1">HUB</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60" href="#">
+<span class="material-symbols-outlined">warning</span>
+<span class="text-[8px] font-label-caps mt-1">ALERTS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[8px] font-label-caps mt-1">MAP</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="text-[8px] font-label-caps mt-1">CROWD</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="text-[8px] font-label-caps mt-1">COPILOT</span>
+</a>
+</nav>
+<!-- Floating Action Button -->
+<button class="fixed right-6 bottom-24 md:bottom-12 bg-primary-fixed text-black w-14 h-14 rounded-full volt-glow flex items-center justify-center hover:scale-110 active:scale-95 transition-all group z-40 border-4 border-black">
+<span class="material-symbols-outlined text-2xl">add_alert</span>
+</button>
+<script>
+        // Atmospheric Micro-interactions
+        setInterval(() => {
+            const glowText = document.querySelectorAll('.volt-text-glow');
+            glowText.forEach(el => {
+                if(Math.random() > 0.98) {
+                    el.style.opacity = '0.7';
+                    setTimeout(() => el.style.opacity = '1', 50);
+                }
+            });
+        }, 500);
+
+        // Terminal Auto-scroll
+        const chatFeed = document.getElementById('chat-feed');
+        if (chatFeed) {
+            chatFeed.scrollTop = chatFeed.scrollHeight;
+        }
+    </script>
+</body></html>

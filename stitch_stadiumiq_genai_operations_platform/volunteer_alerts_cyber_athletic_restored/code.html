@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>STADIUM_IQ | Volunteer Alert Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Anybody', sans-serif;
+            background-color: #000000;
+            color: #e5e2e1;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .scanline-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 0, 0, 0.02) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .segment-bar {
+            display: flex;
+            gap: 2px;
+        }
+
+        .segment {
+            height: 8px;
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .segment.active-volt {
+            background: #dfff00;
+            box-shadow: 0 0 8px rgba(223, 255, 0, 0.5);
+        }
+
+        @keyframes pulse-volt {
+            0%, 100% { box-shadow: 0 0 15px rgba(223, 255, 0, 0.2), inset 0 0 10px rgba(223, 255, 0, 0.1); }
+            50% { box-shadow: 0 0 25px rgba(223, 255, 0, 0.5), inset 0 0 20px rgba(223, 255, 0, 0.2); }
+        }
+
+        .alert-urgent {
+            border: 1px solid #ffb4ab !important;
+            box-shadow: 0 0 15px rgba(255, 180, 171, 0.2);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#dfff00",
+                        "surface": "#131313",
+                        "background": "#000000",
+                        "on-surface": "#e5e2e1",
+                        "error": "#ffb4ab",
+                        "outline-variant": "#454932",
+                        "surface-container-high": "#2a2a2a",
+                        "on-primary-fixed": "#191e00",
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "16px",
+                        "unit": "4px",
+                        "margin-desktop": "32px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Anybody"],
+                        "headline-md": ["Anybody"],
+                        "body-md": ["Anybody"],
+                        "label-caps": ["Anybody"],
+                        "data-mono": ["Anybody"]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+<div class="scanline-overlay"></div>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-white/10">
+<div class="flex justify-between items-center h-16 px-margin-mobile max-w-container-max mx-auto">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer">menu</span>
+<h1 class="text-2xl font-bold italic uppercase tracking-tighter text-primary-fixed">STADIUM_IQ</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-sm border border-primary-fixed/40 overflow-hidden shadow-[0_0_10px_rgba(223,255,0,0.2)]">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIDocT8C1fv-IO9ZIRuzcsr2dWmeFLzE4ndaBRZWW68IGAI83UtLMVY87AW0_P31L7meQB92pCGX4_ZtWsZYqmwcJEunM-0cjI6L0lIp8lbICouBLmkzYJiZDVEviopXeJkFOhO8Iqdiow111lU6-rAc0gsED-WTz6cEfrZd77VTxY1FoC3jS5iCbNQgcyVGofJh8L9o7FDj9UZljuLc3JUUR18_kNlSghi5NYimefW2uMKAj9E0dnag"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-margin-mobile max-w-container-max mx-auto">
+<!-- Dashboard Header -->
+<div class="mb-8">
+<div class="flex items-center gap-3 mb-2">
+<div class="bg-primary-fixed px-3 py-0.5 rounded-sm">
+<span class="text-black font-bold text-[10px] tracking-widest">LIVE FEED</span>
+</div>
+<span class="text-white/40 font-mono text-[10px]">SESSION: ACTIVE_04</span>
+</div>
+<h2 class="text-5xl font-black uppercase leading-none tracking-tighter mb-6">VOLUNTEER ALERTS</h2>
+<!-- Quick Stats -->
+<div class="glass-panel p-4 rounded-sm border-white/5 space-y-4">
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-[10px] font-bold text-white/60">SYSTEM_HEALTH</span>
+<span class="text-[10px] font-mono text-primary-fixed">98.4%</span>
+</div>
+<div class="segment-bar">
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment active-volt"></div>
+<div class="segment"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 mb-6">
+<span class="w-2 h-2 bg-primary-fixed rounded-full animate-pulse"></span>
+<h3 class="font-bold text-lg uppercase tracking-tight">Active Alerts</h3>
+</div>
+<!-- Alert Feed -->
+<div class="space-y-4">
+<!-- Critical Alert Card -->
+<article class="glass-panel p-6 rounded-sm border-l-4 border-l-error relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-bold text-error border border-error/30 px-2 py-0.5 rounded-sm">CRITICAL</span>
+<span class="text-[10px] font-mono text-white/40">ID: 4492-X</span>
+</div>
+<h4 class="text-2xl font-bold text-white leading-tight mb-2">Crowd Spike - Gate 4 North</h4>
+<p class="text-sm text-white/60 leading-relaxed">Sensor nodes detecting 120% capacity threshold. Flow rate bottlenecked at turnstile array G4-A.</p>
+</div>
+</div>
+<!-- Action Button -->
+<div class="flex flex-col gap-2 mt-6">
+<button class="bg-primary-fixed text-black font-bold py-3 text-xs tracking-widest uppercase rounded-sm shadow-[0_0_20px_rgba(223,255,0,0.3)] hover:brightness-110 active:scale-[0.98] transition-all">Respond Now</button>
+<button class="bg-white/5 text-white/60 font-bold py-3 text-xs tracking-widest uppercase border border-white/10 rounded-sm hover:bg-white/10 transition-all">Acknowledge</button>
+</div>
+<!-- AI Recommendation -->
+<div class="mt-4 p-4 bg-primary-fixed/5 border border-primary-fixed/20 rounded-sm flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-fixed text-lg">psychology</span>
+<div>
+<span class="text-[10px] font-bold text-primary-fixed block mb-1">AI_STRATEGY_REC</span>
+<p class="text-xs text-primary-fixed font-medium italic">Divert 5 stewards from Concourse C to Gate 4 bypass lanes. Initiate surge protocol Sigma-7.</p>
+</div>
+</div>
+</article>
+<!-- Moderate Alert Card -->
+<article class="glass-panel p-6 rounded-sm border-l-4 border-l-primary-fixed/30 relative">
+<div class="flex justify-between items-start mb-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-bold text-primary-fixed border border-primary-fixed/30 px-2 py-0.5 rounded-sm">MODERATE</span>
+<span class="text-[10px] font-mono text-white/40">ID: 2210-B</span>
+</div>
+<h4 class="text-2xl font-bold text-white leading-tight mb-2">Restock First Aid Hub</h4>
+<p class="text-sm text-white/60 leading-relaxed">Station 12 (East Mezzanine) reporting low inventory on antiseptic and trauma pads.</p>
+</div>
+</div>
+<button class="w-full border border-primary-fixed text-primary-fixed font-bold py-3 text-xs tracking-widest uppercase rounded-sm hover:bg-primary-fixed/10 transition-all">Dispatch Logistics</button>
+</article>
+<!-- Bento Notifications -->
+<div class="grid grid-cols-2 gap-4">
+<div class="glass-panel p-4 rounded-sm border-white/5">
+<span class="material-symbols-outlined text-white/40 text-lg mb-2">schedule</span>
+<h5 class="text-[10px] font-bold text-white mb-1">Shift Rotation</h5>
+<p class="text-[10px] text-white/40 font-mono">12 MIN REMAINING</p>
+</div>
+<div class="glass-panel p-4 rounded-sm border-white/5">
+<span class="material-symbols-outlined text-white/40 text-lg mb-2">cloud</span>
+<h5 class="text-[10px] font-bold text-white mb-1">Weather Update</h5>
+<p class="text-[10px] text-white/40 font-mono">STORM ALERT</p>
+</div>
+</div>
+<!-- Tactical Map Preview -->
+<div class="glass-panel rounded-sm overflow-hidden">
+<div class="p-3 border-b border-white/5 flex justify-between items-center">
+<span class="text-[10px] font-bold tracking-widest uppercase">Tactical View</span>
+<span class="text-[10px] font-mono text-primary-fixed">LIVE_04</span>
+</div>
+<div class="h-48 bg-cover bg-center relative" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB3rPC1plTaZqKjcL1UKezHolbbt0-7CF1s8NmLVxnAJ0SOS5ZnnQTAp_6AjDOddUOX23eK9HngD9pV2iL20a7IqysjwNif1JnuDUTxEN2Lzxe4H0xVvNDscOAqvC9ST00Lw3Qy3u6m2w6z6VY1QMTIUjB3mLayk1Y0fX_kqUnS-e_OLR1DHFshHEk28qV07u0HCSLqVb1NxbpeXeNkWssfKEPhHuLyUj2EdDfBx4HBAPfsIgteB1I5rg')">
+<div class="absolute inset-0 bg-black/40"></div>
+<div class="absolute bottom-4 left-4 right-4 flex flex-col gap-2">
+<div class="bg-black/80 backdrop-blur-sm p-2 border border-white/10 rounded-sm flex justify-between items-center">
+<span class="text-[10px] font-mono text-white/80">ZONE 4 CONGESTION</span>
+<span class="w-2 h-2 bg-error rounded-full animate-ping"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Nav -->
+<nav class="fixed bottom-0 w-full z-50 bg-black/90 backdrop-blur-xl border-t border-white/10 px-4 pb-safe">
+<div class="flex justify-around items-center h-20">
+<div class="flex flex-col items-center gap-1 text-white/40">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[8px] font-bold tracking-widest uppercase">Home</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-white/40">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[8px] font-bold tracking-widest uppercase">Map</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-primary-fixed bg-primary-fixed/10 py-1 px-4 border border-primary-fixed/40 rounded-full shadow-[0_0_15px_rgba(223,255,0,0.2)]">
+<span class="material-symbols-outlined">warning</span>
+<span class="text-[8px] font-bold tracking-widest uppercase text-primary-fixed">Alerts</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-white/40">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="text-[8px] font-bold tracking-widest uppercase">Command</span>
+</div>
+</div>
+</nav>
+<!-- Floating Action Button -->
+<div class="fixed bottom-24 right-6 z-40">
+<button class="w-14 h-14 bg-primary-fixed text-black flex items-center justify-center rounded-sm shadow-[0_0_20px_rgba(223,255,0,0.4)] active:scale-90 transition-all">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<script>
+        // Atmospheric effects
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => btn.classList.add('scale-95'));
+            btn.addEventListener('mouseup', () => btn.classList.remove('scale-95'));
+        });
+    </script>
+</body></html>
