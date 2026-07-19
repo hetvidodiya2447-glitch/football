@@ -172,13 +172,15 @@ export default function LandingPage({ onDeploy }) {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 icon={Search}
                 className="py-3 shadow-xl"
+                aria-label="Search sports arenas"
               />
               {searchQuery && (
                 <button 
                   onClick={() => setSearchQuery("")} 
                   className="absolute right-3 text-outline-variant hover:text-on-surface"
+                  aria-label="Clear search query"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-5 w-5" aria-hidden="true" />
                 </button>
               )}
             </div>
