@@ -11,7 +11,7 @@
 
 // ─── Kalman Filter for 1D GPS coordinate smoothing ───────────────────────────
 // Reduces jitter from consecutive GPS pings without adding lag.
-class KalmanFilter {
+export class KalmanFilter {
   constructor({ R = 1, Q = 3 } = {}) {
     this.R = R;   // sensor noise covariance (higher = trust GPS less)
     this.Q = Q;   // process noise covariance (higher = faster to react)
@@ -52,7 +52,7 @@ const HIGH_ACCURACY_OPTIONS = {
 };
 
 // ─── Haversine distance in meters ─────────────────────────────────────────────
-function haversine(lon1, lat1, lon2, lat2) {
+export function haversine(lon1, lat1, lon2, lat2) {
   const R = 6371000;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;

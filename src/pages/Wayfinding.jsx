@@ -37,11 +37,11 @@ export default function Wayfinding(props) {
       {/* Top Header */}
       <header className="flex justify-between items-center pb-6 border-b border-outline-variant/20 mb-6">
         <div className="flex items-center gap-3">
-          <Button onClick={onNavigateHome} variant="outline" size="sm" className="p-2" title="Back to Hub">
-            <ArrowLeft className="h-5 w-5 text-on-surface" />
+          <Button onClick={onNavigateHome} variant="outline" size="sm" className="p-2" title="Back to Hub" aria-label="Back to Hub">
+            <ArrowLeft className="h-5 w-5 text-on-surface" aria-hidden="true" />
           </Button>
-          <div className="w-10 h-10 rounded border border-primary-fixed/30 bg-surface flex items-center justify-center volt-glow">
-            <Compass className="h-5 w-5 text-primary-fixed" />
+          <div className="w-10 h-10 rounded border border-primary-fixed/30 bg-surface flex items-center justify-center volt-glow" role="img" aria-label="Compass icon">
+            <Compass className="h-5 w-5 text-primary-fixed" aria-hidden="true" />
           </div>
           <div>
             <h1 className="text-display-sm md:text-headline-md font-bold italic tracking-widest text-primary-fixed volt-text-glow font-display-lg uppercase leading-none">STADIUM BUDDY</h1>
@@ -57,6 +57,7 @@ export default function Wayfinding(props) {
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
             className="bg-surface-container border border-outline-variant/30 text-white text-xs rounded px-2.5 py-1.5 focus:outline-none focus:border-primary-fixed font-label-caps uppercase"
+            aria-label="Select Interface Language"
           >
             {Object.values(LANGUAGES).map((lang) => (
               <option key={lang.code} value={lang.code} className="bg-surface">
@@ -116,6 +117,7 @@ export default function Wayfinding(props) {
               value={startNode}
               onChange={(e) => setStartNode(e.target.value)}
               className="bg-transparent border-none p-0 focus:ring-0 text-xs font-bold text-primary-fixed cursor-pointer focus:outline-none"
+              aria-label="Starting location"
             >
               {Object.keys(VENUE_NODES).map(key => (
                 <option key={key} value={key} className="bg-surface">{VENUE_NODES[key].name.toUpperCase()}</option>
@@ -129,6 +131,7 @@ export default function Wayfinding(props) {
               value={endNode}
               onChange={(e) => setEndNode(e.target.value)}
               className="bg-transparent border-none p-0 focus:ring-0 text-xs font-bold text-secondary cursor-pointer focus:outline-none"
+              aria-label="Destination location"
             >
               {Object.keys(VENUE_NODES).map(key => (
                 <option key={key} value={key} className="bg-surface">{VENUE_NODES[key].name.toUpperCase()}</option>

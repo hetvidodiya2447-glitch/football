@@ -293,36 +293,40 @@ export default function App() {
           </div>
         </div>
 
-        <nav className="hidden md:flex gap-4 items-center">
+        <nav className="hidden md:flex gap-4 items-center" aria-label="Main Navigation">
           <Button
             onClick={() => setCurrentView("fan")}
             variant={currentView === "fan" ? "primary" : "ghost"}
+            aria-current={currentView === "fan" ? "page" : undefined}
           >
-            <Home className="h-4 w-4 mr-2" />
+            <Home className="h-4 w-4 mr-2" aria-hidden="true" />
             HUB
           </Button>
           {["staff", "organizer", "admin"].includes(currentUser?.role) && (
             <Button
               onClick={() => setCurrentView("staff")}
               variant={currentView === "staff" ? "primary" : "ghost"}
+              aria-current={currentView === "staff" ? "page" : undefined}
             >
-              <Bell className="h-4 w-4 mr-2" />
+              <Bell className="h-4 w-4 mr-2" aria-hidden="true" />
               ALERTS
             </Button>
           )}
           <Button
             onClick={() => setCurrentView("wayfinding")}
             variant={currentView === "wayfinding" ? "primary" : "ghost"}
+            aria-current={currentView === "wayfinding" ? "page" : undefined}
           >
-            <MapIcon className="h-4 w-4 mr-2" />
+            <MapIcon className="h-4 w-4 mr-2" aria-hidden="true" />
             MAP
           </Button>
           {["organizer", "admin"].includes(currentUser?.role) && (
             <Button
               onClick={() => setCurrentView("organizer")}
               variant={currentView === "organizer" ? "primary" : "ghost"}
+              aria-current={currentView === "organizer" ? "page" : undefined}
             >
-              <LayoutDashboard className="h-4 w-4 mr-2" />
+              <LayoutDashboard className="h-4 w-4 mr-2" aria-hidden="true" />
               DASHBOARD
             </Button>
           )}
@@ -330,6 +334,7 @@ export default function App() {
             <Button
               onClick={() => setShowSimulator(!showSimulator)}
               variant={showSimulator ? "danger" : "ghost"}
+              aria-label="Toggle simulator controls"
             >
               SIMULATOR
             </Button>
@@ -339,7 +344,11 @@ export default function App() {
         <div className="flex items-center gap-4">
           {currentUser && (
             <>
-              <div className="w-10 h-10 rounded border border-primary-fixed/30 overflow-hidden hidden sm:block shadow-[0_0_10px_rgba(223,255,0,0.2)]">
+              <div 
+                className="w-10 h-10 rounded border border-primary-fixed/30 overflow-hidden hidden sm:block shadow-[0_0_10px_rgba(223,255,0,0.2)]"
+                role="img"
+                aria-label={`User avatar for ${currentUser.name}`}
+              >
                 <div className="w-full h-full bg-surface-container-high flex items-center justify-center text-sm font-bold text-primary-fixed volt-text-glow">
                   {currentUser.avatar || currentUser.name.charAt(0).toUpperCase()}
                 </div>
@@ -350,8 +359,9 @@ export default function App() {
                 size="sm"
                 className="p-2 text-on-surface-variant hover:text-error transition-colors"
                 title="Log Out"
+                aria-label="Log out of session"
               >
-                <LogOut className="h-5 w-5" />
+                <LogOut className="h-5 w-5" aria-hidden="true" />
               </Button>
             </>
           )}
@@ -478,36 +488,40 @@ export default function App() {
       </footer>
 
       {/* Bottom Nav Bar (Mobile) */}
-      <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-black/85 backdrop-blur-md border-t border-outline-variant/20 md:hidden pb-[calc(12px+env(safe-area-inset-bottom))]">
+      <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-black/85 backdrop-blur-md border-t border-outline-variant/20 md:hidden pb-[calc(12px+env(safe-area-inset-bottom))]" aria-label="Mobile Navigation">
         <button
           onClick={() => setCurrentView("fan")}
           className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-all rounded-lg p-2 ${currentView === "fan" ? "text-primary-fixed volt-text-glow" : "text-on-surface-variant hover:text-primary-fixed"}`}
+          aria-current={currentView === "fan" ? "page" : undefined}
         >
-          <Home className="h-5 w-5 mb-1" />
+          <Home className="h-5 w-5 mb-1" aria-hidden="true" />
           <span className="text-[9px] font-mono tracking-widest uppercase">HUB</span>
         </button>
         {["staff", "organizer", "admin"].includes(currentUser?.role) && (
           <button
             onClick={() => setCurrentView("staff")}
             className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-all rounded-lg p-2 ${currentView === "staff" ? "text-primary-fixed volt-text-glow" : "text-on-surface-variant hover:text-primary-fixed"}`}
+            aria-current={currentView === "staff" ? "page" : undefined}
           >
-            <Bell className="h-5 w-5 mb-1" />
+            <Bell className="h-5 w-5 mb-1" aria-hidden="true" />
             <span className="text-[9px] font-mono tracking-widest uppercase">ALERTS</span>
           </button>
         )}
         <button
           onClick={() => setCurrentView("wayfinding")}
           className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-all rounded-lg p-2 ${currentView === "wayfinding" ? "text-primary-fixed volt-text-glow" : "text-on-surface-variant hover:text-primary-fixed"}`}
+          aria-current={currentView === "wayfinding" ? "page" : undefined}
         >
-          <MapIcon className="h-5 w-5 mb-1" />
+          <MapIcon className="h-5 w-5 mb-1" aria-hidden="true" />
           <span className="text-[9px] font-mono tracking-widest uppercase">MAP</span>
         </button>
         {["organizer", "admin"].includes(currentUser?.role) && (
           <button
             onClick={() => setCurrentView("organizer")}
             className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] transition-all rounded-lg p-2 ${currentView === "organizer" ? "text-primary-fixed volt-text-glow" : "text-on-surface-variant hover:text-primary-fixed"}`}
+            aria-current={currentView === "organizer" ? "page" : undefined}
           >
-            <LayoutDashboard className="h-5 w-5 mb-1" />
+            <LayoutDashboard className="h-5 w-5 mb-1" aria-hidden="true" />
             <span className="text-[9px] font-mono tracking-widest uppercase">CROWD</span>
           </button>
         )}
