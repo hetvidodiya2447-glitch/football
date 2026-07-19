@@ -119,6 +119,7 @@ const StadiumMap = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [mapCenter, setMapCenter] = useState(STADIUMS[0].pos);
   const [mapZoom, setMapZoom] = useState(13);
+  const [mapStyle, setMapStyle] = useState('dark'); // 'dark' or 'satellite'
 
   // User GPS Tracking State
   const [userPos, setUserPos] = useState(null);
@@ -410,6 +411,22 @@ const StadiumMap = () => {
               <div className="text-[9px] text-on-surface-variant">{selectedStadium.city}, {selectedStadium.country} • {selectedStadium.sport}</div>
             </div>
 
+            {/* Map Style Toggle Overlay */}
+            <div className="absolute top-3 left-3 z-[1000] flex gap-1 bg-black/80 backdrop-blur-md p-1 border border-white/10 rounded shadow-lg">
+              <button
+                onClick={() => setMapStyle('dark')}
+                className={`px-2 py-1 text-[9px] font-label-caps rounded transition-all ${mapStyle === 'dark' ? 'bg-cyber-volt text-black font-bold' : 'text-on-surface-variant hover:text-white'}`}
+              >
+                DARK
+              </button>
+              <button
+                onClick={() => setMapStyle('satellite')}
+                className={`px-2 py-1 text-[9px] font-label-caps rounded transition-all ${mapStyle === 'satellite' ? 'bg-cyber-volt text-black font-bold' : 'text-on-surface-variant hover:text-white'}`}
+              >
+                SATELLITE
+              </button>
+            </div>
+
             <MapContainer
               center={mapCenter}
               zoom={mapZoom}
@@ -418,10 +435,17 @@ const StadiumMap = () => {
               style={{ height: '100%', width: '100%', background: '#0a0a0a' }}
               attributionControl={false}
             >
-              <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-              />
+              {mapStyle === 'satellite' ? (
+                <TileLayer
+                  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                  attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
+                />
+              ) : (
+                <TileLayer
+                  url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                  attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+                />
+              )}
 
               <MapViewUpdater center={mapCenter} zoom={mapZoom} />
 
